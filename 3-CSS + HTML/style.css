@@ -1,0 +1,157 @@
+﻿body {
+    font-family: 'Arial';
+}
+
+header {
+    background: #004040;
+    border-bottom: 1px solid #002100;
+    display: flex;
+    align-items: center;
+}
+
+    header h1 {
+        margin: 0;
+        display: inline-block;
+        color: #FFFFFF;
+        font-family: 'Roboto';
+        font-size: 2.5em;
+    }
+
+header img {
+    margin: 5px;
+}
+
+.container {
+    flex-flow: row wrap;
+    display: flex;
+}
+
+nav {
+    background: #007F7F;
+    text-align: center;
+    flex: 1 1 100px;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    display: block;
+}
+
+nav ul li a {
+    color: #FFFFFF;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+section {
+    margin: 10px;
+    flex: 2 2 85%;
+}
+
+section:not(:target) {
+    display: none;
+    }
+
+table {
+    width: 100%;
+}
+
+tr:nth-child(even) {
+    background: #98BFBF
+}
+
+tr:nth-child(even) input {
+    background: #98BFBF
+}
+
+tr:nth-child(even) select {
+    background: #98BFBF
+}
+
+tr:nth-child(even) input:invalid, tr:nth-child(even) select:invalid {
+    background-color: #98BFBF;
+}
+
+tr:nth-child(odd) {
+    background: #FFFFFF;
+}
+
+tr:hover {
+    background: #6E6967;
+}
+
+table tr input{
+    margin-left:1%;
+}
+
+th {
+    text-align: left;
+    background: #00BFBF;
+    color: #FFFFFF;
+    height: 30px;
+    width: 20%;
+}
+
+td input {
+    width: 95%;
+}
+
+input, select {
+    border: 1px solid #C5CAE9;
+    font-family: 'Arial';
+    line-height: 20px;
+}
+
+button {
+    font-size: 0.8em;
+    text-align: center;
+}
+
+footer {
+    margin-top: 10px;
+    background: linear-gradient(180deg, #007F7F, #00BFBF);
+    color: #FFFFFF;
+    font-size: 0.8em;
+}
+
+footer p {
+    margin-bottom: 0;
+}
+
+footer a {
+    color: #FFFFFF;
+}
+
+@media print {
+
+    header, nav, th:last-child, td:last-child, th input, 
+	table tbody #add, table tbody #add2, table tbody #add3, footer {
+        display: none;
+    }
+
+    td, th {
+        background: #FFFFFF;
+        color: #000000;
+        border-bottom: 1px solid #B6B6B6;
+        width: auto;
+    }
+
+    select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+    input, select {
+        border: none;
+    }
+}

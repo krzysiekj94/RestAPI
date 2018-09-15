@@ -1,0 +1,11 @@
+C:\Users\Krzysztof\Documents\Visual Studio 2017\Projects\RESTApiNetCore\RESTApiNetCore\bin\Release\netcoreapp2.0\RESTApiNetCore.deps.json
+C:\Users\Krzysztof\Documents\Visual Studio 2017\Projects\RESTApiNetCore\RESTApiNetCore\bin\Release\netcoreapp2.0\RESTApiNetCore.runtimeconfig.json
+C:\Users\Krzysztof\Documents\Visual Studio 2017\Projects\RESTApiNetCore\RESTApiNetCore\bin\Release\netcoreapp2.0\RESTApiNetCore.runtimeconfig.dev.json
+C:\Users\Krzysztof\Documents\Visual Studio 2017\Projects\RESTApiNetCore\RESTApiNetCore\bin\Release\netcoreapp2.0\RESTApiNetCore.dll
+C:\Users\Krzysztof\Documents\Visual Studio 2017\Projects\RESTApiNetCore\RESTApiNetCore\bin\Release\netcoreapp2.0\RESTApiNetCore.pdb
+C:\Users\Krzysztof\Documents\Visual Studio 2017\Projects\RESTApiNetCore\RESTApiNetCore\obj\Release\netcoreapp2.0\RESTApiNetCore.csprojResolveAssemblyReference.cache
+C:\Users\Krzysztof\Documents\Visual Studio 2017\Projects\RESTApiNetCore\RESTApiNetCore\obj\Release\netcoreapp2.0\RESTApiNetCore.csproj.CoreCompileInputs.cache
+C:\Users\Krzysztof\Documents\Visual Studio 2017\Projects\RESTApiNetCore\RESTApiNetCore\obj\Release\netcoreapp2.0\RESTApiNetCore.AssemblyInfoInputs.cache
+C:\Users\Krzysztof\Documents\Visual Studio 2017\Projects\RESTApiNetCore\RESTApiNetCore\obj\Release\netcoreapp2.0\RESTApiNetCore.AssemblyInfo.cs
+C:\Users\Krzysztof\Documents\Visual Studio 2017\Projects\RESTApiNetCore\RESTApiNetCore\obj\Release\netcoreapp2.0\RESTApiNetCore.dll
+C:\Users\Krzysztof\Documents\Visual Studio 2017\Projects\RESTApiNetCore\RESTApiNetCore\obj\Release\netcoreapp2.0\RESTApiNetCore.pdb
