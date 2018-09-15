@@ -113,7 +113,7 @@ namespace RESTApiNetCore.Controllers
             if( student != null)
             {
                 listLectures = _educationSystemData.GetLectures()
-                .FindAll(przedmiotTemp => przedmiotTemp.zapisaniStudenci.Any(studentObj => studentObj == student.Id));
+                .FindAll(przedmiotTemp => przedmiotTemp.ZapisaniStudenci.Any(studentObj => studentObj == student.Id));
             }
 
             if (student == null || listLectures == null || listLectures.Count <= 0)
@@ -140,7 +140,7 @@ namespace RESTApiNetCore.Controllers
                 return BadRequest();
             }
 
-            var studentExistInLecture = existedLecture.zapisaniStudenci.FirstOrDefault(studentObj => studentObj == studentExisted.Id);
+            var studentExistInLecture = existedLecture.ZapisaniStudenci.FirstOrDefault(studentObj => studentObj == studentExisted.Id);
 
             if (studentExistInLecture != null)
             {
@@ -170,7 +170,7 @@ namespace RESTApiNetCore.Controllers
 
             Przedmiot przedmiotRef = _educationSystemData.GetLectures()
              .FirstOrDefault(przedmiotTemp => przedmiotTemp.IdPrzedmiotu == przedmiot.IdPrzedmiotu
-                                              && przedmiotTemp.zapisaniStudenci.Any(studentObj => studentObj == student.Id));
+                                              && przedmiotTemp.ZapisaniStudenci.Any(studentObj => studentObj == student.Id));
 
             if(przedmiotRef == null)
             {
@@ -195,7 +195,7 @@ namespace RESTApiNetCore.Controllers
                 return NotFound();
             }
 
-            if( lectureExisted.zapisaniStudenci.FirstOrDefault( studentObj => studentObj == studentExisted.Id ) == null )
+            if( lectureExisted.ZapisaniStudenci.FirstOrDefault( studentObj => studentObj == studentExisted.Id ) == null )
             {
                 return NotFound();
             }
@@ -227,9 +227,7 @@ namespace RESTApiNetCore.Controllers
                 return NotFound();
             }
 
-            var studentId = przedmiot.zapisaniStudenci.FirstOrDefault(studentObj => studentObj == student.Id);
-
-            if (studentId == null)
+            if (przedmiot.ZapisaniStudenci.FirstOrDefault(studentObj => studentObj == student.Id) == null)
             {
                 return NotFound();
             }
@@ -262,7 +260,7 @@ namespace RESTApiNetCore.Controllers
             }
 
                 Ocena ocena = _educationSystemData.GetNotes()
-                    .Find(ocenaObj => ocenaObj.IdOceny == noteIndex
+                    .FirstOrDefault(ocenaObj => ocenaObj.IdOceny == noteIndex
                                      && ocenaObj.IdStudent == student.Id 
                                      && ocenaObj.IdPrzedmiot == przedmiot.Id);
 
@@ -289,8 +287,7 @@ namespace RESTApiNetCore.Controllers
                 return BadRequest();
             }
 
-            var studentExistInLecture = lecture.zapisaniStudenci.FirstOrDefault(studentObj => studentObj == student.Id);
-            double[] listNotesValidation = { 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0 };
+            var studentExistInLecture = lecture.ZapisaniStudenci.FirstOrDefault(studentObj => studentObj == student.Id);
 
             if ( studentExistInLecture == null || note.Wartosc < 2.0 || note.Wartosc > 5.0)
             {
@@ -324,21 +321,22 @@ namespace RESTApiNetCore.Controllers
             Ocena noteTemp = _educationSystemData.GetNotes()
                             .FirstOrDefault(noteObj => noteObj.IdOceny == noteIndex);
 
-            if (student == null || lecture == null || note == null)
+            if (student == null || lecture == null || noteTemp == null || note == null)
             {
                 return NotFound();
             }
 
-            if(note.Wartosc < 2.0 || note.Wartosc > 5.0)
+            if (note.Wartosc != 2.0 && note.Wartosc != 2.5
+                && note.Wartosc != 3.0 && note.Wartosc != 3.5
+                && note.Wartosc != 4.0 && note.Wartosc != 4.5
+                && note.Wartosc != 5.0)
             {
                 return BadRequest();
             }
 
-            noteTemp.Wartosc = note.Wartosc;
+            _educationSystemData.UpdateStudentNote(student,lecture, noteTemp, note);
 
-            _educationSystemData.UpdateStudentNote(student,lecture, noteTemp);
-
-            return Ok(/*student*/);
+            return Ok();
         }
 
         // Delete  /students/{studentIndex}/lectures/{lectureIndex}/notes/{noteIndex} - usunięcie oceny studenta z danego kursu
@@ -361,7 +359,7 @@ namespace RESTApiNetCore.Controllers
 
             _educationSystemData.DeleteStudentNote(student, lecture, note);
 
-            return Ok(/*student*/);
+            return Ok();
         }
     }
 }

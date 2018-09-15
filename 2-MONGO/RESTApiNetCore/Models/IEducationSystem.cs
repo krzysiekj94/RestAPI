@@ -36,7 +36,7 @@ namespace RESTApiNetCore.Models
         void DeleteStudentFromLecture(Student studentExisted, Przedmiot lectureExisted);
 
         void AddNoteStudentFromLecture(Student studentExisted, Przedmiot lectureExisted, Ocena note);
-        void UpdateStudentNote(Student student, Przedmiot lecture, Ocena note);
+        void UpdateStudentNote(Student student, Przedmiot lecture, Ocena noteTemp, Ocena note);
         void DeleteStudentNote(Student student, Przedmiot lecture, Ocena note);
         void DeleteNote(Ocena note);
     }

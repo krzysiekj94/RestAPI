@@ -29,12 +29,10 @@ namespace RESTApiNetCore.Models
         [DataType(DataType.Date)]
         public DateTime DataWystawienia { get; set; }
 
-        [DataMember]
         [Required]
         [ForeignKey(nameof(Student))]
         public ObjectId IdStudent { get; set; }
 
-        [DataMember]
         [Required]
         [ForeignKey(nameof(Przedmiot))]
         public ObjectId IdPrzedmiot { get; set; }

@@ -14,7 +14,7 @@ namespace RESTApiNetCore.Models
     {
         public Przedmiot()
         {
-            zapisaniStudenci = new List<BsonObjectId>();
+            ZapisaniStudenci = new List<BsonObjectId>();
         }
 
         [BsonId]
@@ -33,6 +33,6 @@ namespace RESTApiNetCore.Models
         [Required]
         public string Nauczyciel { get; set; }
 
-        public List<BsonObjectId> zapisaniStudenci { get; set; }
+        public List<BsonObjectId> ZapisaniStudenci { get; set; }
     }
 }
