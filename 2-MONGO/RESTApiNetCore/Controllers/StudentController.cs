@@ -161,7 +161,7 @@ namespace RESTApiNetCore.Controllers
                             .FirstOrDefault(studentObj => studentObj.Indeks == studentIndex);
 
             Przedmiot przedmiot = _educationSystemData.GetLectures()
-                .FirstOrDefault(przedmiotObj => przedmiotObj._id == lectureIndex);
+                .FirstOrDefault(przedmiotObj => przedmiotObj.IdPrzedmiotu == lectureIndex);
 
             if (student == null || przedmiot == null)
             {
@@ -169,7 +169,7 @@ namespace RESTApiNetCore.Controllers
             }
 
             Przedmiot przedmiotRef = _educationSystemData.GetLectures()
-             .FirstOrDefault(przedmiotTemp => przedmiotTemp._id == przedmiot._id 
+             .FirstOrDefault(przedmiotTemp => przedmiotTemp.IdPrzedmiotu == przedmiot.IdPrzedmiotu
                                               && przedmiotTemp.zapisaniStudenci.Any(studentObj => studentObj == student.Id));
 
             if(przedmiotRef == null)
@@ -188,7 +188,7 @@ namespace RESTApiNetCore.Controllers
                             .FirstOrDefault(studentObj => studentObj.Indeks == studentIndex);
 
             Przedmiot lectureExisted = _educationSystemData.GetLectures()
-                            .FirstOrDefault(lectureObj => lectureObj._id == lectureIndex);
+                            .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == lectureIndex);
 
             if (studentExisted == null || lectureExisted == null)
             {
@@ -213,7 +213,7 @@ namespace RESTApiNetCore.Controllers
                             .FirstOrDefault(studentObj => studentObj.Indeks == studentIndex);
 
             Przedmiot przedmiot = _educationSystemData.GetLectures()
-                            .FirstOrDefault(lectureObj => lectureObj._id == przedmiotIndex);
+                            .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == przedmiotIndex);
 
             List<Ocena> listNotes = new List<Ocena>();
 
@@ -249,7 +249,7 @@ namespace RESTApiNetCore.Controllers
                             .FirstOrDefault(studentObj => studentObj.Indeks == studentIndex);
 
             Przedmiot przedmiot = _educationSystemData.GetLectures()
-                            .FirstOrDefault(lectureObj => lectureObj._id == przedmiotIndex);
+                            .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == przedmiotIndex);
 
             if (student == null || przedmiot == null )
             {
@@ -262,7 +262,7 @@ namespace RESTApiNetCore.Controllers
             }
 
                 Ocena ocena = _educationSystemData.GetNotes()
-                    .Find(ocenaObj => ocenaObj._id == noteIndex
+                    .Find(ocenaObj => ocenaObj.IdOceny == noteIndex
                                      && ocenaObj.IdStudent == student.Id 
                                      && ocenaObj.IdPrzedmiot == przedmiot.Id);
 
@@ -282,7 +282,7 @@ namespace RESTApiNetCore.Controllers
                             .FirstOrDefault(studentObj => studentObj.Indeks == studentIndex);
 
             Przedmiot lecture = _educationSystemData.GetLectures()
-                            .FirstOrDefault(lectureObj => lectureObj._id == lectureIndex);
+                            .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == lectureIndex);
 
             if (student == null || lecture == null || _educationSystemData.GetNotes() == null)
             {
@@ -319,10 +319,10 @@ namespace RESTApiNetCore.Controllers
                             .FirstOrDefault(studentObj => studentObj.Indeks == studentIndex);
 
             Przedmiot lecture = _educationSystemData.GetLectures()
-                            .FirstOrDefault(lectureObj => lectureObj._id == lectureIndex);
+                            .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == lectureIndex);
 
             Ocena noteTemp = _educationSystemData.GetNotes()
-                            .FirstOrDefault(noteObj => noteObj._id == noteIndex);
+                            .FirstOrDefault(noteObj => noteObj.IdOceny == noteIndex);
 
             if (student == null || lecture == null || note == null)
             {
@@ -349,10 +349,10 @@ namespace RESTApiNetCore.Controllers
                 .FirstOrDefault(studentObj => studentObj.Indeks == studentIndex);
 
             Przedmiot lecture = _educationSystemData.GetLectures()
-                            .FirstOrDefault(lectureObj => lectureObj._id == lectureIndex);
+                            .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == lectureIndex);
 
             Ocena note = _educationSystemData.GetNotes()
-                            .FirstOrDefault(noteObj => noteObj._id == noteIndex);
+                            .FirstOrDefault(noteObj => noteObj.IdOceny == noteIndex);
 
             if (student == null || lecture == null || note == null)
             {

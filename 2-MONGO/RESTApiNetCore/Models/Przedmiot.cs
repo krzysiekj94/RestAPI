@@ -22,7 +22,8 @@ namespace RESTApiNetCore.Models
 
         [DataMember]
         [Key]
-        public int _id { get; set; }
+        [Required]
+        public int IdPrzedmiotu { get; set; }
 
         [DataMember]
         [Required]

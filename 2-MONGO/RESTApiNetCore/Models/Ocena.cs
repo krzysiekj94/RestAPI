@@ -15,8 +15,9 @@ namespace RESTApiNetCore.Models
         public ObjectId Id { get; set; }
 
         [DataMember]
+        [Key]
         [Required]
-        public int _id { get; set; }
+        public int IdOceny { get; set; }
 
         [DataMember]
         [Required]

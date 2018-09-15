@@ -42,7 +42,7 @@ namespace RESTApiNetCore.Controllers
         public IActionResult GetOneLectures([FromRoute] int indexLecture)
         {
             Przedmiot lecture = _educationSystemData.GetLectures()
-                .FirstOrDefault(lectureObj => lectureObj._id == indexLecture);
+                .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == indexLecture);
 
             if (lecture == null )
             {
@@ -57,7 +57,7 @@ namespace RESTApiNetCore.Controllers
         public IActionResult AddNewGradeFromLecture([FromRoute] int lectureIndex, [FromBody] Ocena grade)
         {
             Przedmiot lectureExisted = _educationSystemData.GetLectures()
-                            .FirstOrDefault(lectureObj => lectureObj._id == lectureIndex);
+                            .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == lectureIndex);
 
             Student studentExisted = _educationSystemData.GetStudents()
                 .FirstOrDefault(studentObj => studentObj.Id ==  grade.IdStudent);
@@ -85,10 +85,10 @@ namespace RESTApiNetCore.Controllers
         public IActionResult GetNotesFromLecture([FromRoute] int lectureIndex, [FromRoute] int idNote)
         {
             Przedmiot przedmiot = _educationSystemData.GetLectures()
-                                    .FirstOrDefault(lectureObj => lectureObj._id == lectureIndex);
+                                    .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == lectureIndex);
 
             Ocena note = _educationSystemData.GetNotes()
-                            .FirstOrDefault(noteObj => noteObj._id == idNote && noteObj.IdPrzedmiot == przedmiot.Id);
+                            .FirstOrDefault(noteObj => noteObj.IdOceny == idNote && noteObj.IdPrzedmiot == przedmiot.Id);
 
             if( note == null )
             {
@@ -103,10 +103,10 @@ namespace RESTApiNetCore.Controllers
         public IActionResult DeleteNotesFromLecture([FromRoute] int lectureIndex, [FromRoute] int idNote)
         {
             Przedmiot przedmiot = _educationSystemData.GetLectures()
-                                    .FirstOrDefault(lectureObj => lectureObj._id == lectureIndex);
+                                    .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == lectureIndex);
 
             Ocena note = _educationSystemData.GetNotes()
-                            .FirstOrDefault(noteObj => noteObj._id == idNote && noteObj.IdPrzedmiot == przedmiot.Id);
+                            .FirstOrDefault(noteObj => noteObj.IdOceny == idNote && noteObj.IdPrzedmiot == przedmiot.Id);
 
             if (note == null)
             {
@@ -124,10 +124,10 @@ namespace RESTApiNetCore.Controllers
         public IActionResult UpdateNoteFromLecture([FromRoute] int lectureIndex, [FromRoute] int idNote, [FromBody] Ocena noteFromBody )
         {
             Przedmiot przedmiot = _educationSystemData.GetLectures()
-                                    .FirstOrDefault(lectureObj => lectureObj._id == lectureIndex);
+                                    .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == lectureIndex);
 
             Ocena note = _educationSystemData.GetNotes()
-                .FirstOrDefault(noteObj => noteObj._id == idNote && noteObj.IdPrzedmiot == przedmiot.Id);
+                .FirstOrDefault(noteObj => noteObj.IdOceny == idNote && noteObj.IdPrzedmiot == przedmiot.Id);
 
             if( noteFromBody.Id != note.Id )
             {
@@ -149,7 +149,7 @@ namespace RESTApiNetCore.Controllers
         public IActionResult GetNotesFromLecture([FromRoute] int lectureIndex)
         {
             Przedmiot lecture = _educationSystemData.GetLectures()
-                            .FirstOrDefault(lectureObj => lectureObj._id == lectureIndex);
+                            .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == lectureIndex);
 
             List<Ocena> oceny = new List<Ocena>();
 
@@ -193,7 +193,7 @@ namespace RESTApiNetCore.Controllers
         public IActionResult UpdateLecture([FromRoute] int lectureIndex, [FromBody] Przedmiot lecture)
         {
             Przedmiot lectureExist = _educationSystemData.GetLectures()
-                             .FirstOrDefault(lectureObj => lectureObj._id == lectureIndex );
+                             .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == lectureIndex );
 
             if(lectureExist == null)
             {
@@ -214,7 +214,7 @@ namespace RESTApiNetCore.Controllers
         public IActionResult UpdateLecture([FromRoute] int lectureIndex)
         {
             Przedmiot lectureExisted = _educationSystemData.GetLectures()
-                             .FirstOrDefault(lectureObj => lectureObj._id == lectureIndex);
+                             .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == lectureIndex);
 
             if (lectureExisted == null)
             {

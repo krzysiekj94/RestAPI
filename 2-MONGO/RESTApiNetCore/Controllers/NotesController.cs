@@ -36,7 +36,7 @@ namespace RESTApiNetCore.Controllers
         public IActionResult GetNote([FromRoute] int noteIndex)
         {
             Ocena note = _educationSystemData.GetNotes()
-                            .FirstOrDefault(noteObj => noteObj._id == noteIndex);
+                            .FirstOrDefault(noteObj => noteObj.IdOceny == noteIndex);
 
             if (note == null)
             {
@@ -72,9 +72,9 @@ namespace RESTApiNetCore.Controllers
         public IActionResult UpdateNote([FromRoute] int noteIndex, [FromBody] Ocena note)
         {
             Ocena studentExisted = _educationSystemData.GetNotes()
-                             .FirstOrDefault(noteObj => noteObj._id == noteIndex);
+                             .FirstOrDefault(noteObj => noteObj.IdOceny == noteIndex);
 
-            if (studentExisted == null || noteIndex != note._id)
+            if (studentExisted == null || noteIndex != note.IdOceny)
             {
                 return NotFound();
             }

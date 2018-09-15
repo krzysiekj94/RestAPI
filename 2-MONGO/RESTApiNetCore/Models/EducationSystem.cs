@@ -47,9 +47,9 @@ namespace RESTApiNetCore.Models
 
         private void PrepareStudents()
         {
-            //MongoDBContext.Studenci.DeleteMany(_ => true);
-            //MongoDBContext.Przedmioty.DeleteMany(_ => true);
-            //MongoDBContext.Oceny.DeleteMany( _ => true);
+            MongoDBContext.Studenci.DeleteMany(_ => true);
+            MongoDBContext.Przedmioty.DeleteMany(_ => true);
+            MongoDBContext.Oceny.DeleteMany( _ => true);
 
             Student studentPawel = new Student()
             {
@@ -69,14 +69,14 @@ namespace RESTApiNetCore.Models
 
             Przedmiot przedmiotJezykPolski = new Przedmiot()
             {
-                _id = 1,
+                IdPrzedmiotu = 1,
                 Nazwa = "Polski",
                 Nauczyciel = "Bogdan Marecki",
             };
 
             Przedmiot przedmiotMatematyka = new Przedmiot()
             {
-                _id = 2,
+                IdPrzedmiotu = 2,
                 Nazwa = "Matematyka",
                 Nauczyciel = "Roman Bielecki",
             };
@@ -98,8 +98,8 @@ namespace RESTApiNetCore.Models
             student = studenci.Result.FindAll(studentTemp => studentTemp.Indeks == studentTymek.Indeks).FirstOrDefault();
             przedmiotMatematyka.zapisaniStudenci.Add(student.Id);
 
-            MongoDBContext.Przedmioty.ReplaceOneAsync(x => x._id == 1, przedmiotJezykPolski, new UpdateOptions { IsUpsert = true });
-            MongoDBContext.Przedmioty.ReplaceOneAsync(x => x._id == 2, przedmiotMatematyka, new UpdateOptions { IsUpsert = true });
+            MongoDBContext.Przedmioty.ReplaceOneAsync(x => x.IdPrzedmiotu == 1, przedmiotJezykPolski, new UpdateOptions { IsUpsert = true });
+            MongoDBContext.Przedmioty.ReplaceOneAsync(x => x.IdPrzedmiotu == 2, przedmiotMatematyka, new UpdateOptions { IsUpsert = true });
         }
 
         public void AddStudent(Student student)
@@ -142,7 +142,7 @@ namespace RESTApiNetCore.Models
         {
             if(lecture != null )
             {
-                lecture._id = generateUniqueLectureID();
+                lecture.IdPrzedmiotu = generateUniqueLectureID();
                 Lectures.Add(lecture);
             }
         }
@@ -164,11 +164,11 @@ namespace RESTApiNetCore.Models
 
         public Przedmiot getLecture( int indexLecture )
         {
-            Przedmiot przedmiotRef = Lectures.Find(lectureObj => lectureObj._id == indexLecture);
+            Przedmiot przedmiotRef = Lectures.Find(lectureObj => lectureObj.IdPrzedmiotu == indexLecture);
 
             try
             {
-                przedmiotRef = Lectures.Find(lectureObj => lectureObj._id == indexLecture);
+                przedmiotRef = Lectures.Find(lectureObj => lectureObj.IdPrzedmiotu == indexLecture);
             }
             catch
             {
@@ -275,7 +275,7 @@ namespace RESTApiNetCore.Models
             if (studentExisted != null && lectureExisted != null && note != null)
             {
                 //Find last added Ocena
-                var lastAddedOceny = MongoDBContext.Oceny.Find(_ => true).ToListAsync().Result.OrderByDescending(ocenaObj => ocenaObj._id).FirstOrDefault();
+                var lastAddedOceny = MongoDBContext.Oceny.Find(_ => true).ToListAsync().Result.OrderByDescending(ocenaObj => ocenaObj.IdOceny).FirstOrDefault();
                 int ocenyIndex = 0;
 
                 if(lastAddedOceny != null)
@@ -284,7 +284,7 @@ namespace RESTApiNetCore.Models
                 }
 
                 //Prepare Ocena field
-                note._id = ocenyIndex;
+                note.IdOceny = ocenyIndex;
                 note.IdStudent = studentExisted.Id;
                 note.IdPrzedmiot = lectureExisted.Id;
                 note.DataWystawienia = DateTime.Now;
@@ -293,7 +293,7 @@ namespace RESTApiNetCore.Models
                 MongoDBContext.Oceny.InsertOneAsync(note);
 
                 //Add to concrete Student Oceny
-                var ocenaLastAdded = MongoDBContext.Oceny.Find(_ => true).ToListAsync().Result.OrderByDescending(ocenaObj => ocenaObj._id).FirstOrDefault();
+                var ocenaLastAdded = MongoDBContext.Oceny.Find(_ => true).ToListAsync().Result.OrderByDescending(ocenaObj => ocenaObj.IdOceny).FirstOrDefault();
                 studentExisted.Oceny.Add(ocenaLastAdded.Id);
 
                 //Replace old Student data to new
@@ -330,7 +330,7 @@ namespace RESTApiNetCore.Models
             {
                 Ocena ocena = Notes.Find(noteObj => noteObj.Id == note.Id 
                 && student.Id == note.IdStudent
-                && lecture._id == note._id );
+                && lecture.IdPrzedmiotu == note.IdOceny);
 
                 if( ocena != null )
                 {
