@@ -79,7 +79,7 @@ namespace RESTApiNetCore.Controllers
                 return NotFound();
             }
 
-            _educationSystemData.UpdateNote(note);
+            //_educationSystemData.UpdateNote(note);
 
             return Ok(/*note*/);
         }

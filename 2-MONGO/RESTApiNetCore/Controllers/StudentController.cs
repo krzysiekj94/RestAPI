@@ -132,7 +132,7 @@ namespace RESTApiNetCore.Controllers
                             .FirstOrDefault(studentObj => studentObj.Indeks == studentIndex );
 
             Przedmiot existedLecture = existedLecture = _educationSystemData.GetLectures()
-                 .FirstOrDefault(przedmiotTemp => przedmiotTemp.Id == lecture.Id);
+                 .FirstOrDefault(przedmiotTemp => przedmiotTemp.IdPrzedmiotu == lecture.IdPrzedmiotu);
 
             if (studentExisted == null 
                 || existedLecture == null )
@@ -318,10 +318,17 @@ namespace RESTApiNetCore.Controllers
             Przedmiot lecture = _educationSystemData.GetLectures()
                             .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == lectureIndex);
 
-            Ocena noteTemp = _educationSystemData.GetNotes()
-                            .FirstOrDefault(noteObj => noteObj.IdOceny == noteIndex);
+            if (student == null || lecture == null || note == null)
+            {
+                return NotFound();
+            }
 
-            if (student == null || lecture == null || noteTemp == null || note == null)
+            Ocena noteTemp = _educationSystemData.GetNotes()
+                            .FirstOrDefault(noteObj => noteObj.IdOceny == noteIndex
+                                            && noteObj.IdPrzedmiot == lecture.Id
+                                            && noteObj.IdStudent == student.Id);
+
+            if( noteTemp == null )
             {
                 return NotFound();
             }
@@ -349,10 +356,17 @@ namespace RESTApiNetCore.Controllers
             Przedmiot lecture = _educationSystemData.GetLectures()
                             .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == lectureIndex);
 
-            Ocena note = _educationSystemData.GetNotes()
-                            .FirstOrDefault(noteObj => noteObj.IdOceny == noteIndex);
+            if (student == null || lecture == null)
+            {
+                return NotFound();
+            }
 
-            if (student == null || lecture == null || note == null)
+            Ocena note = _educationSystemData.GetNotes()
+                .FirstOrDefault(noteObj => noteObj.IdOceny == noteIndex
+                && noteObj.IdPrzedmiot == lecture.Id
+                && noteObj.IdStudent == student.Id);
+
+            if(note == null)
             {
                 return NotFound();
             }

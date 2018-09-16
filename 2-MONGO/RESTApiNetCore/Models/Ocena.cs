@@ -21,6 +21,10 @@ namespace RESTApiNetCore.Models
 
         [DataMember]
         [Required]
+        public int IndexStudent { get; set; }
+
+        [DataMember]
+        [Required]
         [Range(2.0, 5.0)]
         public float Wartosc { get; set; }
 
