@@ -165,28 +165,23 @@ namespace RESTApiNetCore.Controllers
         }
 
         [HttpPut("{lectureIndex}")]
-        public IActionResult UpdateLecture([FromRoute] int lectureIndex, [FromBody] Przedmiot lecture)
+        public IActionResult UpdateLecture([FromRoute] int lectureIndex, [FromBody] Przedmiot lectureFromBody )
         {
-            Przedmiot lectureExist = _educationSystemData.GetLectures()
+            Przedmiot lectureFromDB = _educationSystemData.GetLectures()
                              .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == lectureIndex );
 
-            if(lectureExist == null)
+            if(lectureFromDB == null)
             {
                 return NotFound();
             }
 
-            lecture.Id = lectureExist.Id;
-
-            if ( !_educationSystemData.UpdateLecture(lecture) )
-            {
-                return BadRequest();
-            }
+            _educationSystemData.UpdateLecture(lectureFromDB, lectureFromBody);
 
             return Ok();
         }
 
         [HttpDelete("{lectureIndex}")]
-        public IActionResult UpdateLecture([FromRoute] int lectureIndex)
+        public IActionResult DeleteLecture([FromRoute] int lectureIndex)
         {
             Przedmiot lectureExisted = _educationSystemData.GetLectures()
                              .FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == lectureIndex);

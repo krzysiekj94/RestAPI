@@ -10,14 +10,6 @@ namespace RESTApiNetCore.Models
 {
     public class EducationSystem : IEducationSystem
     {
-        private List<Student> Students;
-        private List<Ocena> Notes;
-        private List<Przedmiot> Lectures;
-
-        static int counterStudentId = 10;
-        static int counterNotesId = 10;
-        static int counterLectures = 10;
-
         public EducationSystem()
         {
             MongoDBContext = new MongoDBContext();
@@ -136,7 +128,7 @@ namespace RESTApiNetCore.Models
 
         public void AddLecture(Przedmiot lecture)
         {
-            long newIndexLecture = MongoDBContext.Przedmioty.Count(_ => true);
+            Przedmiot lectureToInsert = new Przedmiot();
 
             if (lecture != null )
             {
@@ -150,93 +142,57 @@ namespace RESTApiNetCore.Models
                     przedmiotIndex++;
                 }
 
-                lecture.IdPrzedmiotu = przedmiotIndex;
-                MongoDBContext.Przedmioty.InsertOne(lecture);
+                lectureToInsert.IdPrzedmiotu = przedmiotIndex;
+                lectureToInsert.Nauczyciel = lecture.Nauczyciel;
+                lectureToInsert.Nazwa = lecture.Nazwa;
+
+                MongoDBContext.Przedmioty.InsertOne(lectureToInsert);
             }
         }
 
-        private int generateUniqueLectureID()
+        public void UpdateLecture(Przedmiot lectureFromDB, Przedmiot lectureFromBody)
         {
-            return counterLectures++; //(Lectures.Count < 0) ? 0 : Lectures.Count + 1;
-        }
-
-        private int generateUniqueStudentID()
-        {
-            return counterStudentId++; //(Students.Count < 0) ? 0 : Students.Count + 1;
-        }
-
-        private int generateUniqueNoteID()
-        {
-            return counterNotesId++; //(Notes.Count < 0) ? 0 : Notes.Count + 1;
-        }
-
-        public Przedmiot getLecture( int indexLecture )
-        {
-            Przedmiot przedmiotRef = Lectures.Find(lectureObj => lectureObj.IdPrzedmiotu == indexLecture);
-
-            try
+            if( lectureFromDB != null && lectureFromBody != null )
             {
-                przedmiotRef = Lectures.Find(lectureObj => lectureObj.IdPrzedmiotu == indexLecture);
+                lectureFromDB.Nauczyciel = lectureFromBody.Nauczyciel;
+                lectureFromDB.Nazwa = lectureFromBody.Nazwa;
+
+                MongoDBContext.Przedmioty.ReplaceOne(przedmiotObj => przedmiotObj.Id == lectureFromDB.Id,
+                  lectureFromDB, new UpdateOptions { IsUpsert = true });
             }
-            catch
-            {
-                przedmiotRef = null;
-            }
-
-            return przedmiotRef;
-        }
-
-        public bool UpdateLecture(Przedmiot updateLecture)
-        {
-            bool IsLectureUpdated = false;
-            var lectureToReplace = Lectures.Find(lectureObj => lectureObj.Id == updateLecture.Id);
-
-            if (lectureToReplace != null)
-            {
-                var indexOfReplacedStudent = Lectures.IndexOf(lectureToReplace);
-
-                if (indexOfReplacedStudent >= 0)
-                {
-                    Lectures[indexOfReplacedStudent] = updateLecture;
-                    IsLectureUpdated = true;
-                }
-            }
-
-            return IsLectureUpdated;
         }
 
         public void DeleteLecture(Przedmiot lectureExisted)
         {
-            var lectureToDelete = Lectures.Find(studentObj => studentObj.Id == lectureExisted.Id);
-            int indexDeleteLecture = -1;
+            var noteContainDeleteLecture = MongoDBContext.Oceny.Find(_ => true).ToList().FindAll( ocenaObj => ocenaObj.IdPrzedmiot == lectureExisted.Id);
+            List<ObjectId> listNoteObjectContainIdDeletedLecture = new List<ObjectId>(); 
 
-            if (lectureToDelete != null)
+            foreach( var note in noteContainDeleteLecture)
             {
-                indexDeleteLecture = Lectures.IndexOf(lectureToDelete);
+                listNoteObjectContainIdDeletedLecture.Add(note.Id);
+            }    
+       
+            //Delete Oceny which contains Id deleted lecture from concrete student and then replace student note list 
+            var studenciContainDeleteLecture = MongoDBContext.Studenci.Find(_ => true).ToList()
+                .FindAll(studentObj =>
+                        studentObj.Oceny.Any(noteObj => listNoteObjectContainIdDeletedLecture.Any(noteTempObj => noteTempObj == noteObj)));
 
-                if (indexDeleteLecture >= 0)
-                {
-                    Lectures.RemoveAt(indexDeleteLecture);
-                }
-            }
-        }
-
-        public void AddNote(Ocena note, Student student)
-        {
-            int indexStudent = -1;
-
-            if (note != null && student != null)
+            foreach (var student in studenciContainDeleteLecture)
             {
-                indexStudent = Students.IndexOf(student);
-
-                if (indexStudent > -1)
-                {
-                    Students[indexStudent].Oceny.Add(note.Id);
-                }
-
-                //note.Id = generateUniqueNoteID();
-                //Notes.Add(note);
+                student.Oceny.RemoveAll(ocenaObj => listNoteObjectContainIdDeletedLecture.Contains(ocenaObj));
+                MongoDBContext.Studenci.ReplaceOne(studentObj => studentObj.Id == student.Id,
+                student, new UpdateOptions { IsUpsert = true });
             }
+
+            //Remove all Oceny, which contains Id deleted lecture
+            foreach( var deleteNote in noteContainDeleteLecture)
+            {
+                MongoDBContext.Oceny.DeleteOne(ocenaObj => ocenaObj.Id == deleteNote.Id);
+            }
+
+            //Delete Przedmiot
+            MongoDBContext.Przedmioty.DeleteOne( przedmiotObj => przedmiotObj.Id == lectureExisted.Id);
+
         }
 
         public void UpdateNote(Przedmiot lecture, Student student, Ocena note, Ocena noteFromBody)
