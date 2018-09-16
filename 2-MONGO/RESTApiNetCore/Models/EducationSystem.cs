@@ -291,5 +291,34 @@ namespace RESTApiNetCore.Models
         {
             DeleteStudentNote(student, lecture, note);
         }
+
+        //FILTERS
+
+        public IEnumerable<Student> GetStudentListByFilter(string imie, string nazwisko)
+        {
+            IEnumerable<Student> studentsList = null;
+
+            if (imie == null && nazwisko == null)
+            {
+                studentsList = GetStudents();
+            }
+            else if (imie != null && nazwisko == null)
+            {
+                studentsList = GetStudents()
+                              .Where(studentObj => studentObj.Imie == imie);
+            }
+            else if (imie == null && nazwisko != null)
+            {
+                studentsList = GetStudents()
+                              .Where(studentObj => studentObj.Nazwisko == nazwisko);
+            }
+            else if (imie != null && nazwisko != null)
+            {
+                studentsList  = GetStudents()
+                              .Where(studentObj => studentObj.Imie == imie && studentObj.Nazwisko == nazwisko);
+            }
+
+            return studentsList;
+        }
     }
 }

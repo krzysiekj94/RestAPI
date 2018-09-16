@@ -49,13 +49,6 @@ namespace RESTApiNetCore
 
             app.UseMvc(routes =>
             {
-                //notesController
-
-                routes.MapRoute(
-                    name: "AddNewNote",
-                    template: "{action}/{idNote}"
-                    );
-
                 //lecturesController
 
                 routes.MapRoute(

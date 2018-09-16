@@ -23,5 +23,8 @@ namespace RESTApiNetCore.Models
         void UpdateStudentNote(Student student, Przedmiot lecture, Ocena noteTemp, Ocena note);
         void DeleteStudentNote(Student student, Przedmiot lecture, Ocena note);
         void DeleteNote(Student student, Przedmiot lecture, Ocena note);
+
+        //FILTERS
+        IEnumerable<Student> GetStudentListByFilter(string imie, string nazwisko);
     }
 }

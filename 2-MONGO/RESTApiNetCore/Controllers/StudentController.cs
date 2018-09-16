@@ -21,14 +21,14 @@ namespace RESTApiNetCore.Controllers
 
         // GET  /students 
         [HttpGet]
-        public IActionResult GetAllStudent()
+        public IActionResult GetAllStudent([FromQuery] string imie, [FromQuery] string nazwisko)
         {
-           IEnumerable<Student> studentsList = _educationSystemData.GetStudents();
+            IEnumerable<Student> studentsList = _educationSystemData.GetStudentListByFilter(imie,nazwisko);
 
-           if( studentsList == null || studentsList.Count() <= 0 )
-           {
+            if( studentsList == null || studentsList.Count() <= 0 )
+            {
                 return NotFound();
-           }
+            }
 
            return Ok(studentsList);
         }
