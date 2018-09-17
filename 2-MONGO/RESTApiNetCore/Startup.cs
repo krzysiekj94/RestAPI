@@ -30,6 +30,8 @@ namespace RESTApiNetCore
                 .AddXmlDataContractSerializerFormatters();
 
             services.AddSingleton<IEducationSystem, EducationSystem>();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

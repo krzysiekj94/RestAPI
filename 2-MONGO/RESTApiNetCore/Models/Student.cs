@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -36,6 +37,8 @@ namespace RESTApiNetCore.Models
         [DataMember]
         [Required]
         [DataType(DataType.Date)]
+        [JsonConverter(typeof(JsonDateConverter))]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
         public DateTime DataUrodzenia { get; set; }
 
         public List<ObjectId> Oceny { get; set; }

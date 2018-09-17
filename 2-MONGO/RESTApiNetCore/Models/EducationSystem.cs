@@ -294,31 +294,99 @@ namespace RESTApiNetCore.Models
 
         //FILTERS
 
-        public IEnumerable<Student> GetStudentListByFilter(string imie, string nazwisko)
+        public IEnumerable<Student> GetStudentListByNameFilter(string imie, string nazwisko)
         {
-            IEnumerable<Student> studentsList = null;
+            try
+            {
+                List<FilterDefinition<Student>> filters =
+                    new List<FilterDefinition<Student>>()
+                    {
+                        Builders<Student>.Filter
+                            .Eq("Imie", imie),
+                        Builders<Student>.Filter
+                            .Eq("Nazwisko", nazwisko)
+                    };
 
-            if (imie == null && nazwisko == null)
-            {
-                studentsList = GetStudents();
-            }
-            else if (imie != null && nazwisko == null)
-            {
-                studentsList = GetStudents()
-                              .Where(studentObj => studentObj.Imie == imie);
-            }
-            else if (imie == null && nazwisko != null)
-            {
-                studentsList = GetStudents()
-                              .Where(studentObj => studentObj.Nazwisko == nazwisko);
-            }
-            else if (imie != null && nazwisko != null)
-            {
-                studentsList  = GetStudents()
-                              .Where(studentObj => studentObj.Imie == imie && studentObj.Nazwisko == nazwisko);
-            }
+                FilterDefinition<Student> filter = null;
 
-            return studentsList;
+                if (imie == null || nazwisko == null)
+                {
+                    filter = Builders<Student>.Filter.Or(filters);
+                }
+                else
+                {
+                    filter = Builders<Student>.Filter.And(filters);
+                }
+
+                return MongoDBContext.Studenci.Find(filter).ToList();
+            }
+            catch (Exception studenciException)
+            {
+                throw studenciException;
+            }
+        }
+
+        public IEnumerable<Student> GetStudentListByDateFilter(string dataW, string dataPrzed, string dataPo)
+        {
+            DateModes dateMode = DateModes.UnknownMode;
+            DateTime dateTime = DateTime.Now;
+
+            try
+            {
+                if( dataW != null )
+                {
+                    if( DateTime.TryParse(dataW, out dateTime) )
+                    {
+                        dateMode = DateModes.FilterDateEqual;
+                    }
+                }
+                else if( dataPrzed != null )
+                {
+                    if (DateTime.TryParse(dataPrzed, out dateTime))
+                    {
+                        dateMode = DateModes.FilterDateBefore;
+                    }
+                }
+                else if( dataPo != null)
+                {
+                    if (DateTime.TryParse(dataPo, out dateTime))
+                    {
+                        dateMode = DateModes.FilterDateAfter;
+                    }
+                }
+
+                FilterDefinition<Student> filter = null;
+
+                switch( dateMode )
+                {
+                    case DateModes.FilterDateEqual:
+
+                        filter = Builders<Student>.Filter
+                                .Eq("DataUrodzenia", dateTime);
+                        break;
+
+                    case DateModes.FilterDateBefore:
+
+                        filter = Builders<Student>.Filter
+                                .Lt<DateTime>("DataUrodzenia", dateTime);
+                        break;
+
+                    case DateModes.FilterDateAfter:
+
+                        filter = Builders<Student>.Filter
+                                .Gt<DateTime>("DataUrodzenia", dateTime);
+                        break;
+
+                    case DateModes.UnknownMode:
+                        break;
+                }
+                
+                return MongoDBContext.Studenci.Find(filter).ToList();
+            }
+            catch (Exception studenciException)
+            {
+                throw studenciException;
+            }
         }
     }
 }
