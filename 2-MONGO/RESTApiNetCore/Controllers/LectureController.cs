@@ -19,9 +19,18 @@ namespace RESTApiNetCore.Controllers
 
         // GET  /lectures 
         [HttpGet]
-        public IActionResult GetAllLectures()
+        public IActionResult GetAllLectures( [FromQuery] string prowadzacy)
         {
-            IEnumerable<Przedmiot> lecturesList = _educationSystemData.GetLectures();
+            IEnumerable<Przedmiot> lecturesList = null;
+
+            if( prowadzacy == null)
+            {
+                lecturesList = _educationSystemData.GetLectures();
+            }
+            else
+            {
+                lecturesList = _educationSystemData.GetLecturesByTeacherName(prowadzacy);
+            }
 
             if (lecturesList == null || lecturesList.Count() <= 0)
             {
@@ -159,9 +168,9 @@ namespace RESTApiNetCore.Controllers
                 return BadRequest();
             }
 
-            _educationSystemData.AddLecture(lecture);
+            Przedmiot addedLecture = _educationSystemData.AddLecture(lecture);
 
-            return CreatedAtAction("lectures", new { indexLecture = lecture.Id } , lecture);
+            return CreatedAtAction("lectures", new { indexLecture = lecture.Id } , addedLecture);
         }
 
         [HttpPut("{lectureIndex}")]

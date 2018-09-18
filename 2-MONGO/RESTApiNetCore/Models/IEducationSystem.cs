@@ -13,7 +13,7 @@ namespace RESTApiNetCore.Models
         void AddStudent(Student student);
         void UpdateStudent(Student student);
         void DeleteStudent(Student student);
-        void AddLecture(Przedmiot lecture);
+        Przedmiot AddLecture(Przedmiot lecture);
         void UpdateLecture(Przedmiot lectureFromDB, Przedmiot lectureFromBody);
         void DeleteLecture(Przedmiot lectureExisted);
         void UpdateNote(Przedmiot lecture, Student student, Ocena note, Ocena noteFromBody);
@@ -28,5 +28,6 @@ namespace RESTApiNetCore.Models
         IEnumerable<Student> GetStudentListByNameFilter(string imie, string nazwisko);
         IEnumerable<Student> GetStudentListByDateFilter(string dataW, string dataPrzed, string dataPo );
         List<Ocena> GetNotesStudentsByFilter(Student student, Przedmiot przedmiot, string mniejszaNiz, string wiekszaNiz);
+        IEnumerable<Przedmiot> GetLecturesByTeacherName(string prowadzacy);
     }
 }

@@ -127,7 +127,7 @@ namespace RESTApiNetCore.Models
             }
         }
 
-        public void AddLecture(Przedmiot lecture)
+        public Przedmiot AddLecture(Przedmiot lecture)
         {
             Przedmiot lectureToInsert = new Przedmiot();
 
@@ -148,7 +148,11 @@ namespace RESTApiNetCore.Models
                 lectureToInsert.Nazwa = lecture.Nazwa;
 
                 MongoDBContext.Przedmioty.InsertOne(lectureToInsert);
+
+                return lectureToInsert;
             }
+
+            return null;
         }
 
         public void UpdateLecture(Przedmiot lectureFromDB, Przedmiot lectureFromBody)
@@ -431,6 +435,22 @@ namespace RESTApiNetCore.Models
                 FilterDefinition<Ocena> filter = Builders<Ocena>.Filter.And(filters);
 
                 return MongoDBContext.Oceny.Find(filter).ToList();
+            }
+            catch (Exception studenciException)
+            {
+                throw studenciException;
+            }
+        }
+
+        public IEnumerable<Przedmiot> GetLecturesByTeacherName(string prowadzacy)
+        {
+            try
+            {
+
+                FilterDefinition<Przedmiot> filter = Builders<Przedmiot>.Filter
+                                .Eq("Nauczyciel", prowadzacy);
+
+                return MongoDBContext.Przedmioty.Find(filter).ToList();
             }
             catch (Exception studenciException)
             {
