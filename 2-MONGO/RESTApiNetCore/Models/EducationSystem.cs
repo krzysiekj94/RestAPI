@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using RESTApiNetCore.MongoDB;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -382,6 +383,54 @@ namespace RESTApiNetCore.Models
                 }
                 
                 return MongoDBContext.Studenci.Find(filter).ToList();
+            }
+            catch (Exception studenciException)
+            {
+                throw studenciException;
+            }
+        }
+
+        public List<Ocena> GetNotesStudentsByFilter(Student student, Przedmiot przedmiot, string mniejszaNiz, string wiekszaNiz)
+        {
+            double mniejszaNizDouble = 0.0;
+            double wiekszaNizDouble = 0.0;
+
+            try
+            {
+                List<FilterDefinition<Ocena>> filters =
+                    new List<FilterDefinition<Ocena>>()
+                    {
+                        Builders<Ocena>.Filter
+                            .Eq("IdStudent", student.Id),
+                        Builders<Ocena>.Filter
+                            .Eq("IdPrzedmiot", przedmiot.Id),
+                    };
+
+
+                if (mniejszaNiz != null)
+                {
+                    if (Double.TryParse(mniejszaNiz, NumberStyles.Number, CultureInfo.InvariantCulture, out mniejszaNizDouble))
+                    {
+                        filters.Add(
+                            Builders<Ocena>.Filter
+                            .Lt("Wartosc", (float)mniejszaNizDouble)
+                        );
+                    }
+                }
+                else if (wiekszaNiz != null)
+                {
+                    if (Double.TryParse(wiekszaNiz, NumberStyles.Number, CultureInfo.InvariantCulture, out wiekszaNizDouble))
+                    {
+                        filters.Add(
+                            Builders<Ocena>.Filter
+                            .Gt("Wartosc", (float)wiekszaNizDouble)
+                        );
+                    }
+                }
+
+                FilterDefinition<Ocena> filter = Builders<Ocena>.Filter.And(filters);
+
+                return MongoDBContext.Oceny.Find(filter).ToList();
             }
             catch (Exception studenciException)
             {

@@ -242,7 +242,7 @@ namespace RESTApiNetCore.Controllers
 
         // GET  /students/{studentIndex}/lectures/notes - pobranie listy ocen studenta z danego kursu
         [HttpGet("{studentIndex}/lectures/{przedmiotIndex}/notes")]
-        public IActionResult GetSaveNotesFromLecturesStudent([FromRoute] int studentIndex, [FromRoute] int przedmiotIndex)
+        public IActionResult GetSaveNotesFromLecturesStudent([FromRoute] int studentIndex, [FromRoute] int przedmiotIndex, [FromQuery] string mniejszaNiz, [FromQuery] string wiekszaNiz )
         {
             Student student = _educationSystemData.GetStudents()
                             .FirstOrDefault(studentObj => studentObj.Indeks == studentIndex);
@@ -267,9 +267,16 @@ namespace RESTApiNetCore.Controllers
                 return NotFound();
             }
 
-            listNotes = _educationSystemData.GetNotes()
-                .FindAll( noteObj => noteObj.IdPrzedmiot == przedmiot.Id
-                    && noteObj.IdStudent == student.Id);
+            if( mniejszaNiz == null && wiekszaNiz == null )
+            {
+                listNotes = _educationSystemData.GetNotes()
+                    .FindAll(noteObj => noteObj.IdPrzedmiot == przedmiot.Id
+                       && noteObj.IdStudent == student.Id);
+            }
+            else
+            {
+                listNotes = _educationSystemData.GetNotesStudentsByFilter(student, przedmiot,mniejszaNiz, wiekszaNiz);
+            }
 
             return Ok(listNotes);
         }
