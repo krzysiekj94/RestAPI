@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RESTApiNetCore.Models;
@@ -29,9 +31,25 @@ namespace RESTApiNetCore
                 })
                 .AddXmlDataContractSerializerFormatters();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder
+                        .AllowAnyOrigin()
+                        .WithMethods("GET", "POST", "DELETE", "PUT")
+                        .AllowAnyHeader();
+                    });
+            });
+            /*
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new CorsAuthorizationFilterFactory("AllowAll"));
+            });
+            */
+
             services.AddSingleton<IEducationSystem, EducationSystem>();
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,10 +67,11 @@ namespace RESTApiNetCore
 
             app.UseStaticFiles();
 
+            app.UseCors("AllowAll");
+
             app.UseMvc(routes =>
             {
                 //lecturesController
-
                 routes.MapRoute(
                     name: "AddNewLecture",
                     template: "{action}/{indexLecture}"
@@ -63,10 +82,7 @@ namespace RESTApiNetCore
                     template: "{action}/{idLecture}/notes/{idNote}"
                     );
 
-
-
                 //studentsController
-
                 routes.MapRoute(
                    name: "SaveStudentNoteFromLecture",
                    template: "{action}/{idStudent}/lectures/{idLecture}/notes"
