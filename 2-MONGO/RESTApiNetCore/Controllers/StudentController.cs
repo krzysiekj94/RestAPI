@@ -51,7 +51,7 @@ namespace RESTApiNetCore.Controllers
             {
                 if(imie != null || nazwisko != null)
                 {
-                    studentsList = _educationSystemData.GetStudentListByNameFilter(imie, nazwisko);
+                   studentsList = _educationSystemData.GetStudentListByNameFilter(imie, nazwisko);
                 }
                 else if( dataW != null || dataPrzed != null || dataPo != null )
                 {

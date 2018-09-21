@@ -303,25 +303,8 @@ namespace RESTApiNetCore.Models
         {
             try
             {
-                List<FilterDefinition<Student>> filters =
-                    new List<FilterDefinition<Student>>()
-                    {
-                        Builders<Student>.Filter
-                            .Eq("Imie", imie),
-                        Builders<Student>.Filter
-                            .Eq("Nazwisko", nazwisko)
-                    };
-
-                FilterDefinition<Student> filter = null;
-
-                if (imie == null || nazwisko == null)
-                {
-                    filter = Builders<Student>.Filter.Or(filters);
-                }
-                else
-                {
-                    filter = Builders<Student>.Filter.And(filters);
-                }
+                FilterDefinition<Student> filter = Builders<Student>.Filter
+                           .Regex("Imie", ".*" + imie + ".*");
 
                 return MongoDBContext.Studenci.Find(filter).ToList();
             }

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <title>Grades manager</title>
+    <script type="text/javascript" src="scripts/jquery-3.3.js"></script>
+    <script type="text/javascript" src="scripts/knockout-3.4.js"></script>
+    <script type="text/javascript" src="scripts/knockout.mapping-latest.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+    </head>
+<body>
+    <header>
+        <img src="indeks.jpg" alt="logo" />
+        <h1>Grades manager</h1>
+    </header>
+    <div class="container">
+        <nav>
+            <ul>
+                <li><a href="#students">Manage students</a></li>
+                <li><a href="#lectures">Manage lectures</a></li>
+				<li><a href="#grades">List of grades</a></li>
+            </ul>
+        </nav>
+        <section id="students">
+            <h2>List of students</h2>
+            <div style="overflow-x:auto;">
+                <form>
+                    <table>
+                        <tr>
+                            <th>Index<input type="number" data-bind="textInput: model.students.queryParams.indeksQuery" placeholder="Search..." step="1" min="1" max="999999" /></th>
+                            <th>Surname<input type="text" data-bind="textInput: model.students.queryParams.imie" placeholder="Search..."/></th>
+                            <th>Name<input data-bind="textInput: model.students.queryParams.nazwisko" type="text" placeholder="Search..."/></th>
+                            <th>Date of birthday<input data-bind="textInput: model.students.queryParams.dataUrodzeniaQuery" type="date" min="1960-01-01" max="2018-06-30"/></th>
+                            <th>Action</th>
+                        </tr>
+                        <tbody>
+                         <!-- ko foreach: students-->
+                            <tr>
+                                <td><input type="number" data-bind="value: indeks" placeholder="Index" readonly step="1" min="0" max="999999" required /></td>
+                                <td><input type="text" data-bind="value: imie" placeholder="Surname" required /></td>
+                                <td><input type="text" data-bind="value: nazwisko" placeholder="Name" required /></td>
+                                <td><input type="date" data-bind="value: dataUrodzenia" min="1960-01-01" max="2018-06-30" required /></td>
+                                <td>
+                                    <button>Grades</button>
+                                    <button>Delete</button>
+                                </td>
+                            </tr>
+                        <!-- /ko -->
+                            <tr id="add">
+                                <td><input type="number" name="index" placeholder="Index" readonly step="1" min="0" max="99999" /></td>
+                                <td><input type="text" name="surname" placeholder="Surname" /></td>
+                                <td><input type="text" name="name" placeholder="Name" /></td>
+                                <td><input type="date" name="dateBirthday" min="1960-01-01" max="2018-06-30" /></td>
+                                <td><button type="submit">Save</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </section>
+        <section id="lectures">
+            <h2>List of lectures</h2>
+            <div style="overflow-x:auto;">
+                <form>
+                    <table>
+                        <tr>
+                            <th>Name of lecture<input type="text" placeholder="Search..." /></th>
+                            <th>Lecturer<input type="text" placeholder="Search..." /></th>
+                            <th>Action</th>
+                        </tr>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" placeholder="Name of Lecture" required /></td>
+                                <td><input type="text" placeholder="Lecturer" required /></td>
+                                <td>
+                                    <button>Check grade</button>
+                                    <button>Delete</button>
+                                </td>
+                            </tr>
+                            <tr id="add2">
+                                <td><input type="text" name="lectureName" placeholder="Name of lecture" required /></td>
+                                <td><input type="text" name="lecturerName" placeholder="Lecturer" required /></td>
+                                <td><button type="submit">Save</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </section>
+        <section id="grades">
+            <h2>List of grades</h2>
+            <div style="overflow-x:auto;">
+                <form>
+                    <table>
+                        <tr>
+                            <th>Name of lecture<input type="text" placeholder="Search..." /></th>
+                            <th>Student<input type="text" placeholder="Search..." /></th>
+                            <th>Grade<input type="number" placeholder="Search..." step="0.5" min="2.0" max="5.0" /></th>
+                            <th>Date<input type="date" min="1960-01-01" max="2018-06-30" /></th>
+                            <th>Action</th>
+                        </tr>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <select >
+                                        <option value="text1">something text</option>
+                                        <option value="text2">something next text</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select  >
+                                        <option value="text1">something text</option>
+                                        <option value="text2">something next text</option>
+                                    </select>
+                                </td>
+                                <td><input type="number" placeholder="Grade" required step="0.5" min="2.0" max="5.0" /></td>
+                                <td><input type="date" min="1950-01-01" max="2018-06-30" required /></td>
+                                <td><button>Delete</button></td>
+                            </tr>
+                            <tr id="add3">
+                                <td><select name="IdLecture"></select></td>
+                                <td><select name="index" ></select></td>
+                                <td><input type="number" name="grade" placeholder="Grade" required step="0.5" min="2.0" max="5.0" /></td>
+                                <td><input type="date" name="date" min="1960-01-01" max="2018-06-30" required /></td>
+                                <td><button type="submit">Save</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </section>
+    </div>
+    <footer>
+        <p>Author: Krzysztof Jerzyński</p>
+        <a href="http://www.put.poznan.pl/">Politechnika Poznańska</a>
+    </footer>
+</body>
+</html>
