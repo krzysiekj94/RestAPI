@@ -31,24 +31,6 @@ namespace RESTApiNetCore
                 })
                 .AddXmlDataContractSerializerFormatters();
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAll",
-                    builder =>
-                    {
-                        builder
-                        .AllowAnyOrigin()
-                        .WithMethods("GET", "POST", "DELETE", "PUT")
-                        .AllowAnyHeader();
-                    });
-            });
-            /*
-            services.Configure<MvcOptions>(options =>
-            {
-                options.Filters.Add(new CorsAuthorizationFilterFactory("AllowAll"));
-            });
-            */
-
             services.AddSingleton<IEducationSystem, EducationSystem>();
         }
 
@@ -67,7 +49,7 @@ namespace RESTApiNetCore
 
             app.UseStaticFiles();
 
-            app.UseCors("AllowAll");
+            app.UseCorsMiddleware();
 
             app.UseMvc(routes =>
             {
