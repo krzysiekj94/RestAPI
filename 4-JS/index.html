@@ -21,6 +21,7 @@
                 <li><a href="#students">Manage students</a></li>
                 <li><a href="#lectures">Manage lectures</a></li>
 				<li><a href="#grades">List of grades</a></li>
+                <li><a href="#studentsLectures">Save students to lectures</a></li>
             </ul>
         </nav>
         <section id="students">
@@ -30,9 +31,12 @@
                     <table>
                         <tr>
                             <th>Index</th>
-                            <th>Surname<input type="text" placeholder="Search..."/></th>
-                            <th>Name<input type="text" placeholder="Search..."/></th>
-                            <th>Date of birthday<input type="date" min="1960-01-01" max="2018-06-30"/></th>
+                            <th>Surname<input data-bind="textInput: queryParams.imie" type="text" placeholder="Search..."/></th>
+                            <th>Name<input data-bind="textInput: queryParams.nazwisko" type="text" placeholder="Search..."/></th>
+                            <th>
+                                [Start] Date of birthday<input data-bind="textInput: queryParams.urodzonyPo" type="date" min="1960-01-01" max="2018-06-30"/><br/>
+                                [End]   Date of birthday<input data-bind="textInput: queryParams.urodzonyPrzed" type="date" min="1960-01-01" max="2018-06-30"/>
+                            </th>
                             <th>Action</th>
                         </tr>
                         <tbody>
@@ -73,7 +77,8 @@
                         </tr>
                         <tbody>
                             <tr>
-                                <td><input type="text" placeholder="Name of Lecture" required /></td>
+                                <td><input type="hidden" required />
+                                    <input type="text" placeholder="Name of Lecture" required /></td>
                                 <td><input type="text" placeholder="Lecturer" required /></td>
                                 <td>
                                     <button>Check grade</button>
@@ -81,8 +86,8 @@
                                 </td>
                             </tr>
                             <tr id="add2">
-                                <td><input type="text" name="lectureName" placeholder="Name of lecture" required /></td>
-                                <td><input type="text" name="lecturerName" placeholder="Lecturer" required /></td>
+                                <td><input type="text" name="nazwa" placeholder="Name of lecture" required /></td>
+                                <td><input type="text" name="nauczyciel" placeholder="Lecturer" required /></td>
                                 <td><button type="submit">Save</button></td>
                             </tr>
                         </tbody>
@@ -125,6 +130,45 @@
                                 <td><select name="index" ></select></td>
                                 <td><input type="number" name="grade" placeholder="Grade" required step="0.5" min="2.0" max="5.0" /></td>
                                 <td><input type="date" name="date" min="1960-01-01" max="2018-06-30" required /></td>
+                                <td><button type="submit">Save</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </section>
+        <section id="studentsLectures">
+            <h2>Save students to lectures</h2>
+            <div style="overflow-x:auto;">
+                <form>
+                    <table>
+                        <tr>
+                            <th>Name of lecture<input type="text" placeholder="Search..." /></th>
+                            <th>Student<input type="text" placeholder="Search..." /></th>
+                            <th>Action</th>
+                        </tr>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" placeholder="Name of Lecture" readonly /></td>
+                                <td><input type="text" placeholder="Student" readonly /></td>
+                                <td>
+                                    <button>Delete</button>
+                                </td>
+                            </tr>
+
+                            <tr id="addStudentToLecture">
+                                <td>
+                                    <select>
+                                        <option value="text1">Matematyka</option>
+                                        <option value="text2">Polski</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select>
+                                        <option value="text1">Roman Polański</option>
+                                        <option value="text2">Wiktor Kliczko</option>
+                                    </select>
+                                </td>
                                 <td><button type="submit">Save</button></td>
                             </tr>
                         </tbody>

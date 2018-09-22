@@ -21,21 +21,20 @@ namespace RESTApiNetCore.Controllers
 
         // GET  /students 
         [HttpGet]
-        public IActionResult GetAllStudent([FromQuery] string imie, [FromQuery] string nazwisko, [FromQuery] string indeks, [FromQuery] string dataUrodzenia,
-            [FromQuery] string dataW, [FromQuery] string dataPrzed, [FromQuery] string dataPo)
+        public IActionResult GetAllStudent([FromQuery] string imie, [FromQuery] string nazwisko, 
+            [FromQuery(Name = "urodzonypo")] DateTime? urodzonypo,
+            [FromQuery(Name = "urodzonyprzed")] DateTime? urodzonyprzed)
         {
             IEnumerable<Student> studentsList = null;
 
-            if (imie != null || nazwisko != null || indeks != null || dataUrodzenia != null)
+            if (imie != null || nazwisko != null || urodzonypo != null || urodzonyprzed != null)
             {
-                studentsList = _educationSystemData.GetStudentListByNameFilter(imie, nazwisko, indeks, dataUrodzenia);
+                studentsList = _educationSystemData.GetStudentListByNameFilter(imie, nazwisko, urodzonypo, urodzonyprzed);
             }
             else
             {
                 studentsList = _educationSystemData.GetStudents();
             }
-
-            //studentsList = _educationSystemData.GetStudentListByDateFilter(dataW, dataPrzed, dataPo);
 
             if ( studentsList == null || studentsList.Count() <= 0 )
             {
@@ -219,7 +218,8 @@ namespace RESTApiNetCore.Controllers
 
         // GET  /students/{studentIndex}/lectures/notes - pobranie listy ocen studenta z danego kursu
         [HttpGet("{studentIndex}/lectures/{przedmiotIndex}/notes")]
-        public IActionResult GetSaveNotesFromLecturesStudent([FromRoute] int studentIndex, [FromRoute] int przedmiotIndex, [FromQuery] string mniejszaNiz, [FromQuery] string wiekszaNiz )
+        public IActionResult GetSaveNotesFromLecturesStudent([FromRoute] int studentIndex, [FromRoute] int przedmiotIndex,
+            [FromQuery(Name = "WiekszeLubRowne")] double? wiekszeLubRowne, [FromQuery(Name = "MniejszeLubRowne")] double? mniejszeLubRowne)
         {
             Student student = _educationSystemData.GetStudents()
                             .FirstOrDefault(studentObj => studentObj.Indeks == studentIndex);
@@ -244,16 +244,15 @@ namespace RESTApiNetCore.Controllers
                 return NotFound();
             }
 
-            if( mniejszaNiz == null && wiekszaNiz == null )
+            if (wiekszeLubRowne != null || mniejszeLubRowne != null)
             {
-                listNotes = _educationSystemData.GetNotes()
-                    .FindAll(noteObj => noteObj.IdPrzedmiot == przedmiot.Id
-                       && noteObj.IdStudent == student.Id);
+                listNotes = _educationSystemData.GetNotesStudentsByFilter(student, przedmiot, wiekszeLubRowne, mniejszeLubRowne);
+                return Ok(listNotes);
             }
-            else
-            {
-                listNotes = _educationSystemData.GetNotesStudentsByFilter(student, przedmiot,mniejszaNiz, wiekszaNiz);
-            }
+
+            listNotes = _educationSystemData.GetNotes()
+                .FindAll(noteObj => noteObj.IdPrzedmiot == przedmiot.Id
+                    && noteObj.IdStudent == student.Id);
 
             return Ok(listNotes);
         }

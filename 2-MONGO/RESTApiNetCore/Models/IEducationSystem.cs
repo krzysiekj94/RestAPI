@@ -25,9 +25,9 @@ namespace RESTApiNetCore.Models
         void DeleteNote(Student student, Przedmiot lecture, Ocena note);
 
         //FILTERS
-        IEnumerable<Student> GetStudentListByNameFilter(string imie, string nazwisko, string indeks, string dataUrodzenia);
+        IEnumerable<Student> GetStudentListByNameFilter(string surname, string name, DateTime? birthdayAfter, DateTime? birthdayBefore);
         IEnumerable<Student> GetStudentListByDateFilter(string dataW, string dataPrzed, string dataPo );
-        List<Ocena> GetNotesStudentsByFilter(Student student, Przedmiot przedmiot, string mniejszaNiz, string wiekszaNiz);
+        List<Ocena> GetNotesStudentsByFilter(Student student, Przedmiot przedmiot, double? wiekszeLubRowne, double? mniejszeLubRowne);
         IEnumerable<Przedmiot> GetLecturesByTeacherName(string prowadzacy);
         IEnumerable<Student> GetStudentsFromLecture(Przedmiot lecture);
     }

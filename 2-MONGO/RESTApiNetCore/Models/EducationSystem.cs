@@ -313,46 +313,44 @@ namespace RESTApiNetCore.Models
 
         //FILTERS
 
-        public IEnumerable<Student> GetStudentListByNameFilter(string imie, string nazwisko, string indeks, string dataUrodzenia)
+        public IEnumerable<Student> GetStudentListByNameFilter(string surname, string name, DateTime? birthdayAfter, DateTime? birthdayBefore)
         {
-            int studentIndeks = -1;
-
             try
             {
-                List<FilterDefinition<Student>> filters =
-                    new List<FilterDefinition<Student>>();
+                var filters = new List<FilterDefinition<Student>>();
 
-                if (indeks != null && int.TryParse(indeks, out studentIndeks) )
+                if(surname != null)
                 {
-                    filters.Add(Builders<Student>.Filter
-                                 .Eq("Indeks", studentIndeks));
+                    filters.Add(Builders<Student>.Filter.Regex(s => s.Imie, ".*" + surname + ".*"));
                 }
 
-                if ( imie != null)
+                if(name != null)
                 {
-                    filters.Add(Builders<Student>.Filter
-                                .Regex("Imie", ".*" + imie + ".*"));
+                    filters.Add(Builders<Student>.Filter.Regex(s => s.Nazwisko, ".*" + name + ".*"));
                 }
 
-                if(nazwisko != null )
+                if (birthdayAfter != null)
                 {
-                    filters.Add(Builders<Student>.Filter
-                                .Regex("Nazwisko", ".*" + nazwisko + ".*"));
+                    filters.Add(Builders<Student>.Filter.Gte(s => s.DataUrodzenia, birthdayAfter));
                 }
 
-                if(dataUrodzenia != null)
+                if (birthdayBefore != null)
                 {
-                    filters.Add(Builders<Student>.Filter
-                                .Eq("DataUrodzenia", dataUrodzenia));
+                    filters.Add(Builders<Student>.Filter.Lte(s => s.DataUrodzenia, birthdayBefore));
                 }
 
-                FilterDefinition<Student> filter = Builders<Student>.Filter.Or(filters);
+                FilterDefinition<Student> filter = Builders<Student>.Filter.Empty;
+
+                if(filters.Count > 0)
+                {
+                    filter = Builders<Student>.Filter.And(filters);
+                }
 
                 return MongoDBContext.Studenci.Find(filter).ToList();
             }
-            catch (Exception studenciException)
+            catch (Exception ex)
             {
-                throw studenciException;
+                throw ex;
             }
         }
 
@@ -419,51 +417,31 @@ namespace RESTApiNetCore.Models
             }
         }
 
-        public List<Ocena> GetNotesStudentsByFilter(Student student, Przedmiot przedmiot, string mniejszaNiz, string wiekszaNiz)
+        public List<Ocena> GetNotesStudentsByFilter(Student student, Przedmiot przedmiot, double? ge, double? le)
         {
-            double mniejszaNizDouble = 0.0;
-            double wiekszaNizDouble = 0.0;
-
             try
             {
-                List<FilterDefinition<Ocena>> filters =
-                    new List<FilterDefinition<Ocena>>()
-                    {
-                        Builders<Ocena>.Filter
-                            .Eq("IdStudent", student.Id),
-                        Builders<Ocena>.Filter
-                            .Eq("IdPrzedmiot", przedmiot.Id),
-                    };
+                var indexNumberFiler = Builders<Ocena>.Filter
+                    .Where(studentObj => studentObj.IndexStudent == student.Indeks);
 
+                List<Ocena> notes =  MongoDBContext.Oceny
+                        .Find(indexNumberFiler).ToList();
 
-                if (mniejszaNiz != null)
+                if (ge != null)
                 {
-                    if (Double.TryParse(mniejszaNiz, NumberStyles.Number, CultureInfo.InvariantCulture, out mniejszaNizDouble))
-                    {
-                        filters.Add(
-                            Builders<Ocena>.Filter
-                            .Lt("Wartosc", (float)mniejszaNizDouble)
-                        );
-                    }
-                }
-                else if (wiekszaNiz != null)
-                {
-                    if (Double.TryParse(wiekszaNiz, NumberStyles.Number, CultureInfo.InvariantCulture, out wiekszaNizDouble))
-                    {
-                        filters.Add(
-                            Builders<Ocena>.Filter
-                            .Gt("Wartosc", (float)wiekszaNizDouble)
-                        );
-                    }
+                    notes = notes.Where(o => o.Wartosc >= ge).ToList();
                 }
 
-                FilterDefinition<Ocena> filter = Builders<Ocena>.Filter.And(filters);
+                if (le != null)
+                {
+                    notes = notes.Where(o => o.Wartosc <= le).ToList();
+                }
 
-                return MongoDBContext.Oceny.Find(filter).ToList();
+                return notes;
             }
-            catch (Exception studenciException)
+            catch (Exception ex)
             {
-                throw studenciException;
+                throw ex;
             }
         }
 
