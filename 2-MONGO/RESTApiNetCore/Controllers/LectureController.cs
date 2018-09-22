@@ -204,5 +204,20 @@ namespace RESTApiNetCore.Controllers
 
             return Ok();
         }
+
+        [HttpGet("{idPrzedmiotu}/students")]
+        public IActionResult GetStudentsFromLecture(int idPrzedmiotu)
+        {
+            Przedmiot lecture = _educationSystemData.GetLectures().FirstOrDefault(lectureObj => lectureObj.IdPrzedmiotu == idPrzedmiotu);
+
+            if (lecture == null)
+            {
+                return NotFound();
+            }
+
+            IEnumerable<Student> students = _educationSystemData.GetStudentsFromLecture(lecture);
+
+            return Ok(students);
+        }
     }
 }

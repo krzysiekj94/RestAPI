@@ -29,5 +29,6 @@ namespace RESTApiNetCore.Models
         IEnumerable<Student> GetStudentListByDateFilter(string dataW, string dataPrzed, string dataPo );
         List<Ocena> GetNotesStudentsByFilter(Student student, Przedmiot przedmiot, string mniejszaNiz, string wiekszaNiz);
         IEnumerable<Przedmiot> GetLecturesByTeacherName(string prowadzacy);
+        IEnumerable<Student> GetStudentsFromLecture(Przedmiot lecture);
     }
 }

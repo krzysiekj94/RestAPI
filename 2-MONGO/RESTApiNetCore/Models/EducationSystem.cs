@@ -463,5 +463,19 @@ namespace RESTApiNetCore.Models
                 throw studenciException;
             }
         }
+
+        public IEnumerable<Student> GetStudentsFromLecture(Przedmiot lecture)
+        {
+            IEnumerable<Student> allStudentsList = null;
+            IEnumerable<Student> studentsFromLecture = null;
+
+            if ( lecture != null)
+            {
+                allStudentsList = GetStudents().FindAll(_ => true).ToList();
+                studentsFromLecture = allStudentsList.Where(s => lecture.ZapisaniStudenci.Contains(s.Id));
+            }
+
+            return studentsFromLecture;
+        }
     }
 }
