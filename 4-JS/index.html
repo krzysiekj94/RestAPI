@@ -29,10 +29,10 @@
                 <form>
                     <table>
                         <tr>
-                            <th>Index<input type="number" data-bind="textInput: model.students.queryParams.indeks" placeholder="Search..." step="1" min="1" max="999999" /></th>
-                            <th>Surname<input type="text" data-bind="textInput: model.students.queryParams.imie" placeholder="Search..."/></th>
-                            <th>Name<input data-bind="textInput: model.students.queryParams.nazwisko" type="text" placeholder="Search..."/></th>
-                            <th>Date of birthday<input data-bind="textInput: model.students.queryParams.dataUrodzenia" type="date" min="1960-01-01" max="2018-06-30"/></th>
+                            <th>Index</th>
+                            <th>Surname<input type="text" placeholder="Search..."/></th>
+                            <th>Name<input type="text" placeholder="Search..."/></th>
+                            <th>Date of birthday<input type="date" min="1960-01-01" max="2018-06-30"/></th>
                             <th>Action</th>
                         </tr>
                         <tbody>
@@ -43,17 +43,18 @@
                                 <td><input type="text" data-bind="value: nazwisko" placeholder="Name" required /></td>
                                 <td><input type="date" data-bind="value: dataUrodzenia" min="1960-01-01" max="2018-06-30" required /></td>
                                 <td>
-                                    <button>Grades</button>
-                                    <button>Delete</button>
+                                    <button data-bind="click: $parent.removeStudent">Remove</button>
+                                    <button data-bind="click: $parent.showStudentGrades">Grades</button>
+                                    <button data-bind="click: $parent.updateStudent">Update</button>
                                 </td>
                             </tr>
                         <!-- /ko -->
                             <tr id="add">
-                                <td><input type="number" name="index" placeholder="Index" readonly step="1" min="0" max="99999" /></td>
-                                <td><input type="text" name="surname" placeholder="Surname" /></td>
-                                <td><input type="text" name="name" placeholder="Name" /></td>
-                                <td><input type="date" name="dateBirthday" min="1960-01-01" max="2018-06-30" /></td>
-                                <td><button type="submit">Save</button></td>
+                                <td><input data-bind="textInput: current.student.indeks" type="number" name="indeks" placeholder="Index" step="1" min="0" max="99999" /></td>
+                                <td><input data-bind="textInput: current.student.imie" type="text" name="imie" placeholder="Surname" /></td>
+                                <td><input data-bind="textInput: current.student.nazwisko" type="text" name="nazwisko" placeholder="Name" /></td>
+                                <td><input data-bind="textInput: current.student.dataUrodzenia" type="date" name="dataUrodzenia" min="1960-01-01" max="2018-06-30" /></td>
+                                <td><button type="submit" data-bind="click: addStudent">Save</button></td>
                             </tr>
                         </tbody>
                     </table>

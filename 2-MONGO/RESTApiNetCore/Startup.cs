@@ -49,7 +49,10 @@ namespace RESTApiNetCore
 
             app.UseStaticFiles();
 
-            app.UseCorsMiddleware();
+            app.UseCors(builder => builder
+              .AllowAnyOrigin()
+              .WithMethods("POST", "PUT", "GET", "DELETE", "OPTIONS")
+              .AllowAnyHeader());
 
             app.UseMvc(routes =>
             {

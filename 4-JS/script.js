@@ -1,53 +1,108 @@
 "use strict";
-var apiUrl = "http://localhost:8010/";
-var collection = function() {
-	var self = ko.observableArray();
-	
-	self.url = apiUrl + "students";
-	self.postUrl = self.url;
-	self.get = function(query) {
-		var url = self.url;
-		if(query){
-			url = url + query;
-		}
-		$.ajax({
-			url: url,
-			method: "GET",
-			dataType: "json",
-			success: function(data) {
-				console.log(data);
-				self.removeAll();
-				data.forEach(function(element, index, array) {
-					var object = ko.mapping.fromJS(element);
-					self.push(object);
-				});
-			}
-			});
-	}
-	self.parseQuery = function() {
-		self.get('?' + $.param(ko.mapping.toJS(self.queryParams)));
-	}
-	return self;
+
+const apiUrl = "http://localhost:8010/";
+const studentsEndpoint = "students";
+
+const QueryInvoker = function () {
+    const self = ko.observableArray();
+    self.getStudents = function (query, cb) {
+        const url = apiUrl + studentsEndpoint;
+        if (query) {
+            url = url + query;
+        }
+        $.ajax({
+            url: url,
+            method: "GET",
+            dataType: "json",
+            success: function (data) {
+                cb(data, null);
+            },
+        });
+    }
+    self.addStudent = function (student, cb) {
+        const url = apiUrl + studentsEndpoint;
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(student),
+            success: cb,
+            contentType: "application/json"
+        });
+    }
+    self.updateStudent = function (student, cb) {
+        const url = apiUrl + studentsEndpoint + "/" + student.indeks;
+        $.ajax({
+            type: "PUT",
+            url: url,
+            data: JSON.stringify(student),
+            success: cb,
+            contentType: "application/json"
+        });
+    }
+    self.removeStudent = function (student, cb) {
+        const url = apiUrl + studentsEndpoint + "/" + student.indeks;
+        $.ajax({
+            type: "DELETE",
+            url: url,
+            success: cb,
+            contentType: "application/json"
+        });
+    }
+    return self;
 }
-var StudentModel = function(){
-	var self = this;
-	self.students = new collection();
-	
-	self.students.queryParams = {
-    	indeks: ko.observable(),
-		imie: ko.observable(),
-		nazwisko: ko.observable(),
-		dataUrodzenia: ko.observable()
-	}
-	Object.keys(self.students.queryParams).forEach(function(key) {
-		self.students.queryParams[key].subscribe(function() {
-			self.students.parseQuery();
-		});
-	});
-	self.students.get();
+const q = new QueryInvoker();
+
+const AppViewModel = function () {
+    const self = this;
+    self.students = new ko.observableArray();
+    self.queryParams = {
+        imie: ko.observable(),
+        nazwisko: ko.observable()
+    };
+    self.current = {};
+    self.current.student = {
+        indeks: ko.observable(),
+        imie: ko.observable(),
+        nazwisko: ko.observable(),
+        dataUrodzenia: ko.observable(),
+    };
+    self.refreshStudents = function () {
+        q.getStudents(null, function (students) {
+            appModel.students.removeAll();
+            students.forEach(s => {
+                appModel.students.push(s);
+            });
+        })
+    };
+    self.addStudent = function () {
+        const plain = ko.mapping.toJS(self.current.student);
+        q.addStudent(plain, function() {
+            self.refreshStudents();
+        });
+    };
+    self.updateStudent = function (student) {
+        const plain = ko.mapping.toJS(student);
+        q.updateStudent(plain, function() {
+            self.refreshStudents();
+        });
+    };
+    self.removeStudent = function (student) {
+        const plain = ko.mapping.toJS(student);
+        q.removeStudent(plain, function() {
+            self.refreshStudents();
+        });
+    };
+    self.showStudentGrades = function (student) {
+        const plain = ko.mapping.toJS(student);
+        console.log(plain);
+        window.location = '#grades' 
+    };
 }
-var model = new StudentModel();
-$(document).ready(function() {
-	
-	ko.applyBindings(model);
+
+const appModel = new AppViewModel();
+
+$(document).ready(function () {
+    $.support.cors = true;
+    ko.applyBindings(appModel);
+    appModel.refreshStudents();
 });
