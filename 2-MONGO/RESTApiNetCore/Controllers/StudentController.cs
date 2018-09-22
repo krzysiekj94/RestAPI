@@ -21,46 +21,23 @@ namespace RESTApiNetCore.Controllers
 
         // GET  /students 
         [HttpGet]
-        public IActionResult GetAllStudent([FromQuery] string imie, [FromQuery] string nazwisko, 
+        public IActionResult GetAllStudent([FromQuery] string imie, [FromQuery] string nazwisko, [FromQuery] string indeks, [FromQuery] string dataUrodzenia,
             [FromQuery] string dataW, [FromQuery] string dataPrzed, [FromQuery] string dataPo)
         {
             IEnumerable<Student> studentsList = null;
 
-            if( imie != null || nazwisko != null)
+            if (imie != null || nazwisko != null || indeks != null || dataUrodzenia != null)
             {
-                if( dataW != null || dataPrzed != null || dataPo != null)
-                {
-                    return BadRequest();
-                }
-            }
-
-            if (dataW != null || dataPrzed != null || dataPo != null)
-            {
-                if (imie != null || nazwisko != null)
-                {
-                    return BadRequest();
-                }
-            }
-
-            if ( (imie == null && nazwisko == null) 
-                && (dataW == null && dataPrzed == null && dataPo == null ))
-            {
-                studentsList = _educationSystemData.GetStudents();
+                studentsList = _educationSystemData.GetStudentListByNameFilter(imie, nazwisko, indeks, dataUrodzenia);
             }
             else
             {
-                if(imie != null || nazwisko != null)
-                {
-                   studentsList = _educationSystemData.GetStudentListByNameFilter(imie, nazwisko);
-                }
-                else if( dataW != null || dataPrzed != null || dataPo != null )
-                {
-
-                    studentsList = _educationSystemData.GetStudentListByDateFilter(dataW, dataPrzed, dataPo);
-                }
+                studentsList = _educationSystemData.GetStudents();
             }
 
-            if( studentsList == null || studentsList.Count() <= 0 )
+            //studentsList = _educationSystemData.GetStudentListByDateFilter(dataW, dataPrzed, dataPo);
+
+            if ( studentsList == null || studentsList.Count() <= 0 )
             {
                 return NotFound();
             }

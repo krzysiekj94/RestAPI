@@ -297,16 +297,38 @@ namespace RESTApiNetCore.Models
             DeleteStudentNote(student, lecture, note);
         }
 
+        public IEnumerable<Student> GetStudentsFromLecture(Przedmiot lecture)
+        {
+            IEnumerable<Student> allStudentsList = null;
+            IEnumerable<Student> studentsFromLecture = null;
+
+            if (lecture != null)
+            {
+                allStudentsList = GetStudents().FindAll(_ => true).ToList();
+                studentsFromLecture = allStudentsList.Where(s => lecture.ZapisaniStudenci.Contains(s.Id));
+            }
+
+            return studentsFromLecture;
+        }
+
         //FILTERS
 
-        public IEnumerable<Student> GetStudentListByNameFilter(string imie, string nazwisko)
+        public IEnumerable<Student> GetStudentListByNameFilter(string imie, string nazwisko, string indeks, string dataUrodzenia)
         {
+            int studentIndeks = -1;
+
             try
             {
                 List<FilterDefinition<Student>> filters =
                     new List<FilterDefinition<Student>>();
 
-                if( imie != null)
+                if (indeks != null && int.TryParse(indeks, out studentIndeks) )
+                {
+                    filters.Add(Builders<Student>.Filter
+                                 .Eq("Indeks", studentIndeks));
+                }
+
+                if ( imie != null)
                 {
                     filters.Add(Builders<Student>.Filter
                                 .Regex("Imie", ".*" + imie + ".*"));
@@ -318,16 +340,13 @@ namespace RESTApiNetCore.Models
                                 .Regex("Nazwisko", ".*" + nazwisko + ".*"));
                 }
 
-                FilterDefinition<Student> filter = null;
+                if(dataUrodzenia != null)
+                {
+                    filters.Add(Builders<Student>.Filter
+                                .Eq("DataUrodzenia", dataUrodzenia));
+                }
 
-                if (imie == null || nazwisko == null)
-                {
-                    filter = Builders<Student>.Filter.Or(filters);
-                }
-                else
-                {
-                    filter = Builders<Student>.Filter.And(filters);
-                }
+                FilterDefinition<Student> filter = Builders<Student>.Filter.Or(filters);
 
                 return MongoDBContext.Studenci.Find(filter).ToList();
             }
@@ -462,20 +481,6 @@ namespace RESTApiNetCore.Models
             {
                 throw studenciException;
             }
-        }
-
-        public IEnumerable<Student> GetStudentsFromLecture(Przedmiot lecture)
-        {
-            IEnumerable<Student> allStudentsList = null;
-            IEnumerable<Student> studentsFromLecture = null;
-
-            if ( lecture != null)
-            {
-                allStudentsList = GetStudents().FindAll(_ => true).ToList();
-                studentsFromLecture = allStudentsList.Where(s => lecture.ZapisaniStudenci.Contains(s.Id));
-            }
-
-            return studentsFromLecture;
         }
     }
 }
