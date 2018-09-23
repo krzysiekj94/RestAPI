@@ -125,9 +125,9 @@ const AppViewModel = function () {
                 return i.indeks == indeks;
             }
             if (idPrzedmiotu != null & indeks == null) {
-                return i.idPrzedmiotu == idPrzedmiot;
+                return i.idPrzedmiotu == idPrzedmiotu;
             }
-            return i.idPrzedmiot == idPrzedmiot && i.indeks == indeks;
+            return i.idPrzedmiotu == idPrzedmiotu && i.indeks == indeks;
         });
         return filtered;
     });
@@ -267,7 +267,7 @@ const AppViewModel = function () {
         self.refreshGrades(function() {
             self.clearQueries();
             const plain = ko.mapping.toJS(student);
-            self.gradesQuery.numerIndeksu(plain.indeks)
+            self.gradesQuery.indeks(plain.indeks)
         });
         window.location = "#grades";
     };
@@ -275,7 +275,7 @@ const AppViewModel = function () {
         self.refreshGrades(function() {
             self.clearQueries();
             const plain = ko.mapping.toJS(lecture);
-            self.gradesQuery.idPrzedmiot(plain.idPrzedmiotu)
+            self.gradesQuery.idPrzedmiotu(plain.idPrzedmiotu)
             window.location = "#grades";
         });
     };
@@ -302,6 +302,12 @@ const AppViewModel = function () {
         const plainStudent = self.selectedStudentToAssign();
         if (plainLecture == null ) return;
         if (plainStudent == null ) return;
+        const alreadyAssigned = self.studentsForLecture().find(function(s) {
+            return s.numerIndeksu == plainStudent.indeks;
+        });
+        if (alreadyAssigned != null) {
+            return;
+        }
         const assignEndpoint = studentsEndpoint + "/" + plainStudent.indeks + "/lectures/" + plainLecture.idPrzedmiotu;
         q.add(assignEndpoint);
         self.studentsForLecture.push(plainStudent);

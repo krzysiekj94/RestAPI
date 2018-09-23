@@ -79,13 +79,15 @@ namespace RESTApiNetCore.Controllers
         [HttpPut("{studentIndex}")]
         public IActionResult UpdateStudent( [FromRoute] int studentIndex, [FromBody] Student student )
         {
-           Student studentExisted = _educationSystemData.GetStudents()
+            var studentExisted = _educationSystemData.GetStudents()
                             .FirstOrDefault(studentObj => studentObj.Indeks == studentIndex);
 
-            if(studentExisted == null )
+            
+            if (studentExisted == null )
             {
                 return NotFound();
             }
+
 
             student.Id = studentExisted.Id;
             student.Indeks = studentExisted.Indeks;
@@ -137,13 +139,13 @@ namespace RESTApiNetCore.Controllers
 
         // POST  /students/{studentIndex}/lectures - zapisanie studenta na dany kurs
         [HttpPost("{studentIndex}/lectures")]
-        public IActionResult PostSaveLecturesStudent([FromRoute] int studentIndex, [FromBody] Przedmiot lecture)
+        public IActionResult PostSaveLecturesStudent([FromRoute] int studentIndex, [FromRoute] int Indexlecture)
         {
             Student studentExisted = _educationSystemData.GetStudents()
                             .FirstOrDefault(studentObj => studentObj.Indeks == studentIndex );
 
             Przedmiot existedLecture = existedLecture = _educationSystemData.GetLectures()
-                 .FirstOrDefault(przedmiotTemp => przedmiotTemp.IdPrzedmiotu == lecture.IdPrzedmiotu);
+                 .FirstOrDefault(przedmiotTemp => przedmiotTemp.IdPrzedmiotu == Indexlecture);
 
             if (studentExisted == null 
                 || existedLecture == null )
