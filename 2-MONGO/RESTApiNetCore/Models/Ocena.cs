@@ -21,8 +21,13 @@ namespace RESTApiNetCore.Models
         public int IdOceny { get; set; }
 
         [DataMember]
+        [Key]
         [Required]
-        public int IndexStudent { get; set; }
+        public int Indeks { get; set; }
+
+        [DataMember]
+        [Required]
+        public int IdPrzedmiotu { get; set; }
 
         [DataMember]
         [Required]

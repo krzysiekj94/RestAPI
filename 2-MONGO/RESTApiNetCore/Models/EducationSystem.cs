@@ -241,10 +241,15 @@ namespace RESTApiNetCore.Models
 
                 //Prepare Ocena field
                 note.IdOceny = (int)ocenyIndex;
-                note.IndexStudent = studentExisted.Indeks;
+                note.IdPrzedmiotu = lectureExisted.IdPrzedmiotu;
+                note.Indeks = studentExisted.Indeks;
                 note.IdStudent = studentExisted.Id;
                 note.IdPrzedmiot = lectureExisted.Id;
-                note.DataWystawienia = DateTime.Now;
+
+                if( note.DataWystawienia == null )
+                {
+                    note.DataWystawienia = DateTime.Now;
+                }
 
                 //Add to Oceny
                 MongoDBContext.Oceny.InsertOne(note);
@@ -264,9 +269,19 @@ namespace RESTApiNetCore.Models
             {
                 //Prepare Ocena field
                 float wartoscOceny = updatedNote.Wartosc;
+                DateTime time = updatedNote.DataWystawienia;
 
                 updatedNote = noteTemp;
-                updatedNote.DataWystawienia = DateTime.Now;
+
+                if( time == null)
+                {
+                    updatedNote.DataWystawienia = DateTime.Now;
+                }
+                else
+                {
+                    updatedNote.DataWystawienia = time;
+                }
+
                 updatedNote.Wartosc = wartoscOceny;
 
                 //Replace in Oceny (only, student store objectid note )
@@ -422,7 +437,7 @@ namespace RESTApiNetCore.Models
             try
             {
                 var indexNumberFiler = Builders<Ocena>.Filter
-                    .Where(studentObj => studentObj.IndexStudent == student.Indeks);
+                    .Where(studentObj => studentObj.Indeks == student.Indeks);
 
                 List<Ocena> notes =  MongoDBContext.Oceny
                         .Find(indexNumberFiler).ToList();

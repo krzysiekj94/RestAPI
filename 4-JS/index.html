@@ -31,16 +31,15 @@
                     <table>
                         <tr>
                             <th>Index</th>
-                            <th>Surname<input data-bind="textInput: queryParams.imie" type="text" placeholder="Search..."/></th>
-                            <th>Name<input data-bind="textInput: queryParams.nazwisko" type="text" placeholder="Search..."/></th>
-                            <th>
-                                [Start] Date of birthday<input data-bind="textInput: queryParams.urodzonyPo" type="date" min="1960-01-01" max="2018-06-30"/><br/>
-                                [End]   Date of birthday<input data-bind="textInput: queryParams.urodzonyPrzed" type="date" min="1960-01-01" max="2018-06-30"/>
-                            </th>
-                            <th>Action</th>
+                            <th>Surname<input data-bind="textInput: studentsQuery.imie" type="text" placeholder="Search..."/></th>
+                            <th>Name<input data-bind="textInput: studentsQuery.nazwisko" type="text" placeholder="Search..."/></th>
+                            <th>Birthday:<input data-bind="value: studentsQuery.dataUrodzeniaOd" type="date" min="1960-01-01"
+                                        max="2018-06-30" /><input data-bind="value: studentsQuery.dataUrodzeniaDo" type="date"
+                                        min="1960-01-01" max="2018-06-30" /></th>
+                            <th>Action <button data-bind="click: clearQueries">Clear queries</button></th>
                         </tr>
                         <tbody>
-                         <!-- ko foreach: students-->
+                         <!-- ko foreach: studentsFiltered-->
                             <tr>
                                 <td><input type="number" data-bind="value: indeks" placeholder="Index" readonly step="1" min="0" max="999999" required /></td>
                                 <td><input type="text" data-bind="value: imie" placeholder="Surname" required /></td>
@@ -58,7 +57,7 @@
                                 <td><input data-bind="textInput: current.student.imie" type="text" name="imie" placeholder="Surname" /></td>
                                 <td><input data-bind="textInput: current.student.nazwisko" type="text" name="nazwisko" placeholder="Name" /></td>
                                 <td><input data-bind="textInput: current.student.dataUrodzenia" type="date" name="dataUrodzenia" min="1960-01-01" max="2018-06-30" /></td>
-                                <td><button type="submit" data-bind="click: addStudent">Save</button></td>
+                                <td><button type="submit" data-bind="click: addStudent">add</button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -71,24 +70,28 @@
                 <form>
                     <table>
                         <tr>
-                            <th>Name of lecture<input type="text" placeholder="Search..." /></th>
-                            <th>Lecturer<input type="text" placeholder="Search..." /></th>
-                            <th>Action</th>
+                            <th>Name of lecture<input data-bind="textInput: lecturesQuery.nazwa" type="text" placeholder="Search..." /></th>
+                            <th>Lecturer<input data-bind="textInput: lecturesQuery.nauczyciel" type="text" placeholder="Search..." /></th>
+                            <th>Action <button data-bind="click: clearQueries">Clear queries</button></th>
                         </tr>
                         <tbody>
+                            <!-- ko foreach: lecturesFiltered-->
                             <tr>
                                 <td><input type="hidden" required />
-                                    <input type="text" placeholder="Name of Lecture" required /></td>
-                                <td><input type="text" placeholder="Lecturer" required /></td>
+                                    <input data-bind="textInput: nazwa" type="text" placeholder="Name of Lecture" required /></td>
+                                <td><input data-bind="textInput: nauczyciel" type="text" placeholder="Lecturer" required /></td>
                                 <td>
-                                    <button>Check grade</button>
-                                    <button>Delete</button>
+                                    <button data-bind="click: $parent.removeLecture">Remove</button>
+                                    <button data-bind="click: $parent.showLectureGrades">Grades</button>
+                                    <button data-bind="click: $parent.showStudentsForLecture">Students</button>
+                                    <button data-bind="click: $parent.updateLecture">Update</button>
                                 </td>
                             </tr>
+                             <!-- /ko -->
                             <tr id="add2">
-                                <td><input type="text" name="nazwa" placeholder="Name of lecture" required /></td>
-                                <td><input type="text" name="nauczyciel" placeholder="Lecturer" required /></td>
-                                <td><button type="submit">Save</button></td>
+                                <td><input data-bind="textInput: current.lecture.nazwa" type="text" name="nazwa" placeholder="Name of lecture" required /></td>
+                                <td><input data-bind="textInput: current.lecture.nauczyciel" type="text" name="nauczyciel" placeholder="Lecturer" required /></td>
+                                <td><button data-bind="click: addLecture" type="submit">add</button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -101,77 +104,129 @@
                 <form>
                     <table>
                         <tr>
-                            <th>Name of lecture<input type="text" placeholder="Search..." /></th>
-                            <th>Student<input type="text" placeholder="Search..." /></th>
+                            <th>Lecture
+                                    <select data-bind="options: lectures,
+                                        optionsText: getLectureName,
+                                        value: gradesQuery.idPrzedmiotu,
+                                        optionsValue: 'idPrzedmiotu',
+                                        optionsCaption: 'Search...'">
+                                    </select>
+                                </th>
+                                <th>Student
+                                    <select data-bind="options: students,
+                                        optionsText: getStudentFullName,
+                                        value: gradesQuery.indeks,
+                                        optionsValue: 'indeks',
+                                        optionsCaption: 'Search...'">
+                                    </select>
+                                </th>
                             <th>Grade<input type="number" placeholder="Search..." step="0.5" min="2.0" max="5.0" /></th>
-                            <th>Date<input type="date" min="1960-01-01" max="2018-06-30" /></th>
-                            <th>Action</th>
+                            <th>Date</th>
+                            <th>Action <button data-bind="click: clearQueries">Clear queries</button></th>
                         </tr>
                         <tbody>
+                            <!-- ko foreach: gradesFiltered-->
                             <tr>
                                 <td>
-                                    <select >
-                                        <option value="text1">something text</option>
-                                        <option value="text2">something next text</option>
+                                    <select data-bind="options: $parent.lectures,
+                                    optionsText: $parent.getLectureName,
+                                    value: $data.idPrzedmiotu,
+                                    optionsValue: 'idPrzedmiotu',
+                                    optionsCaption: 'Choose...'">
                                     </select>
                                 </td>
                                 <td>
-                                    <select  >
-                                        <option value="text1">something text</option>
-                                        <option value="text2">something next text</option>
+                                    <select data-bind="options: $parent.students,
+                                    optionsText: $parent.getStudentFullName,
+                                    value: $data.indeks,
+                                    optionsValue: 'indeks',
+                                    optionsCaption: 'Choose...'">
                                     </select>
                                 </td>
-                                <td><input type="number" placeholder="Grade" required step="0.5" min="2.0" max="5.0" /></td>
-                                <td><input type="date" min="1950-01-01" max="2018-06-30" required /></td>
-                                <td><button>Delete</button></td>
+                                <td><input data-bind="textInput: wartosc" type="number" placeholder="Grade" required
+                                        step="0.5" min="2.0" max="5.0" /></td>
+                                <td><input data-bind="value: dataWystawienia" type="date" min="1950-01-01" max="2018-06-30" required /></td>
+                                 <td>
+                                    <button data-bind="click: $parent.removeGrade">Remove</button>
+                                    <button data-bind="click: $parent.updateGrade">Update</button>
+                                </td>
                             </tr>
+                            <!-- /ko -->
                             <tr id="add3">
-                                <td><select name="IdLecture"></select></td>
-                                <td><select name="index" ></select></td>
-                                <td><input type="number" name="grade" placeholder="Grade" required step="0.5" min="2.0" max="5.0" /></td>
-                                <td><input type="date" name="date" min="1960-01-01" max="2018-06-30" required /></td>
-                                <td><button type="submit">Save</button></td>
+                                <td>
+                                <select data-bind="options: lectures,
+                                        optionsText: getLectureName,
+                                        value: current.grade.idPrzedmiotu,
+                                        optionsValue: 'idPrzedmiotu',
+                                        optionsCaption: 'Choose...'">
+                                </select>
+                                </td>
+                                <td>
+                                    <select data-bind="options: students,
+                                    optionsText: getStudentFullName,
+                                    value: current.grade.indeks,
+                                    optionsValue: 'indeks',
+                                    optionsCaption: 'Choose...'">
+                                    </select>
+                                </td>
+                                <td><input data-bind="textInput: current.grade.wartosc" type="number" name="grade" placeholder="Grade" required step="0.5" min="2.0"
+                                        max="5.0" /></td>
+                                <td><input data-bind="value: current.grade.dataWystawienia" type="date" name="date" min="1960-01-01" max="2018-06-30" required /></td>
+                                <td><button data-bind="click: addGrade">add</button></td>
                             </tr>
                         </tbody>
                     </table>
                 </form>
             </div>
         </section>
-        <section id="studentsLectures">
-            <h2>Save students to lectures</h2>
+        <section id="studentsForLecture">
+            <h2>Students for selected lecture</h2>
             <div style="overflow-x:auto;">
                 <form>
                     <table>
-                        <tr>
-                            <th>Name of lecture<input type="text" placeholder="Search..." /></th>
-                            <th>Student<input type="text" placeholder="Search..." /></th>
-                            <th>Action</th>
-                        </tr>
-                        <tbody>
+                        <thead>
                             <tr>
-                                <td><input type="text" placeholder="Name of Lecture" readonly /></td>
-                                <td><input type="text" placeholder="Student" readonly /></td>
-                                <td>
-                                    <button>Delete</button>
-                                </td>
+                                <th>Index</th>
+                                <th>Surname</th>
+                                <th>Name</th>
+                                <th>Birthday</th>
+                                <th>Action</th>
                             </tr>
-
-                            <tr id="addStudentToLecture">
+                        </thead>
+                        <tbody data-bind="foreach: studentsForLecture">
+                            <tr>
+                                <td><input data-bind="textInput: indeks" type="number" placeholder="Index"
+                                        readonly step="1" min="0" max="999999" required /></td>
+                                <td><input data-bind="textInput: imie" type="text" placeholder="Surname" required /></td>
+                                <td><input data-bind="textInput: nazwisko" type="text" placeholder="Name" required /></td>
+                                <td><input data-bind="value: dataUrodzenia" type="date" min="1960-01-01" max="2018-06-30"
+                                        required /></td>
                                 <td>
-                                    <select>
-                                        <option value="text1">Matematyka</option>
-                                        <option value="text2">Polski</option>
-                                    </select>
+                                    <button data-bind="click: $parent.unassignStudentFromLecture">Unassign from this lecture</button>
                                 </td>
-                                <td>
-                                    <select>
-                                        <option value="text1">Roman Polański</option>
-                                        <option value="text2">Wiktor Kliczko</option>
-                                    </select>
-                                </td>
-                                <td><button type="submit">Save</button></td>
                             </tr>
                         </tbody>
+                    </table>
+                    <table style="margin-top: 50px;">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr id="add4">
+                                <td>
+                                    <select data-bind="options: students,
+                                            optionsText: getStudentFullName,
+                                            value: selectedStudentToAssign,
+                                            optionsCaption: 'Choose...'">
+                                        </select>
+                                        <!-- optionsValue: 'indeks', -->
+                                </td>
+                                <td><button data-bind="click: assignStudentToLecture">Assign to this lecture</button></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </form>
             </div>
